@@ -328,7 +328,7 @@ class _AssignDriverDialogState extends ConsumerState<_AssignDriverDialog> {
                   value: d.id,
                   child: Text('${d.fullName} (${d.phone ?? "بدون هاتف"})'),
                 );
-              }).toList>,
+              }).toList(),
               onChanged: (val) {
                 setState(() {
                   _selectedDriverId = val;

@@ -1,0 +1,79 @@
+name: Flutter Multi-Platform Cloud Build
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  build-android-apk:
+    name: 📱 Build Android Release APK
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.19.x'
+          channel: 'stable'
+          cache: true
+
+      - name: Get Dependencies
+        working-directory: ./frontend
+        run: flutter pub get
+
+      - name: Build Android Release APK
+        working-directory: ./frontend
+        run: flutter build apk --release --split-per-abi
+
+      - name: Upload Android APK Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: Driver-App-Android-APKs
+          path: frontend/build/app/outputs/flutter-apk/*.apk
+          retention-days: 14
+
+  build-windows-exe:
+    name: 🖥️ Build Windows Desktop Release (.exe)
+    runs-on: windows-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.19.x'
+          channel: 'stable'
+          cache: true
+
+      - name: Enable Windows Desktop Support
+        run: flutter config --enable-windows-desktop
+
+      - name: Get Dependencies
+        working-directory: ./frontend
+        run: flutter pub get
+
+      - name: Build Windows Desktop Release
+        working-directory: ./frontend
+        run: flutter build windows --release
+
+      - name: Compress Windows Executable Package
+        run: Compress-Archive -Path frontend/build/windows/x64/runner/Release/* -DestinationPath AntigravityLogistics-Windows-x64.zip
+
+      - name: Upload Windows Executable Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Admin-Panel-Windows-x64-Release
+          path: AntigravityLogistics-Windows-x64.zip
+          retention-days: 14

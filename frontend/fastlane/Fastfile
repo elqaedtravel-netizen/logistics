@@ -1,0 +1,20 @@
+default_platform(:android)
+
+platform :android do
+  desc "Build Release APK and App Bundle (AAB)"
+  lane :build_release do
+    sh("flutter", "build", "appbundle", "--release")
+    sh("flutter", "build", "apk", "--release", "--split-per-abi")
+  end
+
+  desc "Deploy Release AAB to Google Play Internal Testing Track"
+  lane :deploy_internal do
+    build_release
+    upload_to_play_store(
+      track: 'internal',
+      aab: '../build/app/outputs/bundle/release/app-release.aab',
+      skip_upload_screenshots: true,
+      skip_upload_images: true
+    )
+  end
+end

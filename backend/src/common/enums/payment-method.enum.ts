@@ -1,0 +1,14 @@
+export enum PaymentMethod {
+  CASH_ON_DELIVERY = 'CASH_ON_DELIVERY',
+  PAYMOB_CARD = 'PAYMOB_CARD',
+  PAYMOB_WALLET = 'PAYMOB_WALLET',
+  PAYMOB_MEEZA = 'PAYMOB_MEEZA',
+}
+
+export enum PaymentStatus {
+  UNPAID = 'UNPAID',
+  PENDING = 'PENDING',
+  PAID = 'PAID',
+  FAILED = 'FAILED',
+  REFUNDED = 'REFUNDED',
+}

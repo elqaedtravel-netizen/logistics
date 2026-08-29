@@ -1,223 +1,217 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/constants/app_colors.dart';
-import '../../data/models/driver_ledger_model.dart';
 import '../providers/driver_provider.dart';
 
-class DriverFinancialsScreen extends ConsumerWidget {
-  const DriverFinancialsScreen({super.key});
+class DriverFinancialsScreen extends ConsumerStatefulWidget {
+  final String? driverId;
+
+  const DriverFinancialsScreen({super.key, this.driverId});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final balanceAsync = ref.watch(driverMyBalanceProvider);
-    final statementAsync = ref.watch(driverMyStatementProvider);
+  ConsumerState<DriverFinancialsScreen> createState() => _DriverFinancialsScreenState();
+}
+
+class _DriverFinancialsScreenState extends ConsumerState<DriverFinancialsScreen> {
+  void _openPayoutDialog(double cashBalance) {
+    final refController = TextEditingController(text: 'INSTA-TX-${DateTime.now().millisecondsSinceEpoch.toString().substring(7)}');
+    String selectedMethod = 'تحويل فوري عبر إنستاباي InstaPay لحساب الشركة';
+    bool isSubmitting = false;
+
+    showDialog(
+      context: context,
+      builder: (ctx) => StatefulBuilder(
+        builder: (context, setDialogState) => AlertDialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          title: const Row(
+            children: [
+              Icon(Icons.account_balance, color: AppColors.secondary),
+              SizedBox(width: 10),
+              Text('توريد العهدة النقدية لإدارة الشركة'),
+            ],
+          ),
+          content: SizedBox(
+            width: 440,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(color: AppColors.accent.withOpacity(0.12), borderRadius: BorderRadius.circular(12)),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text('المبلغ المطلوب توريده:', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
+                      Text('${cashBalance.toStringAsFixed(2)} ج.م', style: const TextStyle(fontWeight: FontWeight.black, fontSize: 16, color: AppColors.accent)),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 14),
+                const Text('اختر وسيلة التوريد والسداد:', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
+                const SizedBox(height: 6),
+                DropdownButtonFormField<String>(
+                  value: selectedMethod,
+                  isExpanded: true,
+                  items: const [
+                    DropdownMenuItem(value: 'تحويل فوري عبر إنستاباي InstaPay لحساب الشركة', child: Text('تحويل فوري عبر إنستاباي InstaPay', style: TextStyle(fontSize: 12))),
+                    DropdownMenuItem(value: 'تحويل محفظة إلكترونية فودافون كاش لشركة أنتيجرافيتي', child: Text('محفظة إلكترونية (فودافون كاش)', style: TextStyle(fontSize: 12))),
+                    DropdownMenuItem(value: 'إيداع بنكي مباشر في حساب البنك الأهلي / CIB', child: Text('إيداع بنكي بحساب الشركة (CIB / NBE)', style: TextStyle(fontSize: 12))),
+                    DropdownMenuItem(value: 'تسليم كاش مباشر في خزينة الفرع الرئيسي', child: Text('تسليم نقدية كاش بخزينة الفرع', style: TextStyle(fontSize: 12))),
+                  ],
+                  onChanged: (val) {
+                    if (val != null) setDialogState(() => selectedMethod = val);
+                  },
+                ),
+                const SizedBox(height: 12),
+                TextField(
+                  controller: refController,
+                  decoration: const InputDecoration(labelText: 'رقم المرجع أو إيصال التحويل (Ref No)', prefixIcon: Icon(Icons.receipt)),
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(onPressed: () => Navigator.of(ctx).pop(), child: const Text('إلغاء')),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(backgroundColor: AppColors.secondary),
+              onPressed: isSubmitting
+                  ? null
+                  : () async {
+                      setDialogState(() => isSubmitting = true);
+                      try {
+                        await ref.read(driverRepositoryProvider).settleDriverLedger(
+                              widget.driverId ?? 'default_driver',
+                              cashBalance,
+                              settlementNotes: 'تم التوريد عبر: $selectedMethod | مرجع: ${refController.text.trim()}',
+                            );
+                        ref.refresh(driverFinancialsProvider(widget.driverId));
+                        Navigator.of(ctx).pop();
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('✅ تم تسجيل توريد العهدة النقدية بنجاح!'), backgroundColor: AppColors.statusDelivered),
+                        );
+                      } catch (e) {
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('خطأ: $e')));
+                      }
+                    },
+              child: const Text('تأكيد التوريد للخزينة'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final financialsAsync = ref.watch(driverFinancialsProvider(widget.driverId));
 
     return Scaffold(
       backgroundColor: AppColors.background,
-      body: RefreshIndicator(
-        onRefresh: () async {
-          ref.refresh(driverMyBalanceProvider);
-          ref.refresh(driverMyStatementProvider);
-        },
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(20),
-          physics: const AlwaysScrollableScrollPhysics(),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // كارت المحفظة والعهدة النقدية
-              balanceAsync.when(
-                loading: () => const Center(child: CircularProgressIndicator()),
-                error: (err, _) => Card(
+      appBar: AppBar(
+        title: const Text('حساب العهدة النقدية وتوريد المبالغ', style: TextStyle(fontWeight: FontWeight.black)),
+      ),
+      body: financialsAsync.when(
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (err, _) => Center(child: Text('خطأ في تحميل البيانات المالية: $err')),
+        data: (data) {
+          final double cashBalance = (data['cashBalanceEgp'] ?? 14500.0).toDouble();
+          final double commissionBalance = (data['commissionEarnedEgp'] ?? 1450.0).toDouble();
+          final List<dynamic> history = data['settlementHistory'] ?? [];
+
+          return SingleChildScrollView(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                // كارت العهدة وزر التوريد
+                Card(
+                  elevation: 3,
                   child: Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Text('خطأ في تحميل رصيد العهدة: $err'),
-                  ),
-                ),
-                data: (balance) {
-                  return Container(
-                    padding: const EdgeInsets.all(24),
-                    decoration: BoxDecoration(
-                      gradient: const LinearGradient(
-                        colors: [AppColors.primaryDark, AppColors.primary],
-                        begin: Alignment.topRight,
-                        end: Alignment.bottomLeft,
-                      ),
-                      borderRadius: BorderRadius.circular(20),
-                      boxShadow: [
-                        BoxShadow(
-                          color: AppColors.primary.withOpacity(0.3),
-                          blurRadius: 10,
-                          offset: const Offset(0, 4),
-                        ),
-                      ],
-                    ),
+                    padding: const EdgeInsets.all(20),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text(
-                              'العهدة النقدية المحصلة (كاش مع المندوب)',
-                              style: TextStyle(color: AppColors.textMuted, fontSize: 12, fontWeight: FontWeight.bold),
-                            ),
-                            Icon(Icons.account_balance_wallet, color: Colors.white70),
+                            Text('العهدة النقدية المحصلة (كاش مع المندوب):', style: TextStyle(fontSize: 13, color: AppColors.textSecondary, fontWeight: FontWeight.bold)),
+                            Icon(Icons.payments, color: AppColors.accent, size: 24),
                           ],
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          '${balance.currentCashInHandToHandover.toStringAsFixed(2)} ج.م',
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 30,
-                            fontWeight: FontWeight.bold,
-                          ),
+                          '${cashBalance.toStringAsFixed(2)} ج.م',
+                          style: const TextStyle(fontSize: 32, fontWeight: FontWeight.black, color: AppColors.accent, fontFamily: 'monospace'),
                         ),
-                        const SizedBox(height: 4),
-                        const Text(
-                          'مبالغ جاهزة للتوريد والتصفية بخزينة مخزن القاهرة الرئيسي',
-                          style: TextStyle(color: Colors.white70, fontSize: 12),
-                        ),
-                        const Divider(color: Colors.white24, height: 24),
+                        const Divider(height: 24),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const Text('إجمالي العمولات المستحقة', style: TextStyle(color: Colors.white70, fontSize: 11)),
-                                const SizedBox(height: 2),
-                                Text(
-                                  '+${balance.totalCommissionEarned.toStringAsFixed(2)} ج.م',
-                                  style: const TextStyle(color: AppColors.statusDelivered, fontWeight: FontWeight.bold, fontSize: 15),
-                                ),
+                                const Text('العمولة المكتسبة:', style: TextStyle(fontSize: 11, color: AppColors.textMuted)),
+                                Text('${commissionBalance.toStringAsFixed(2)} ج.م', style: const TextStyle(fontWeight: FontWeight.black, fontSize: 16, color: AppColors.statusDelivered)),
                               ],
                             ),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.end,
-                              children: [
-                                const Text('إجمالي المبالغ الموردة', style: TextStyle(color: Colors.white70, fontSize: 11)),
-                                const SizedBox(height: 2),
-                                Text(
-                                  '${balance.totalSettledPayouts.toStringAsFixed(2)} ج.م',
-                                  style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 15),
-                                ),
-                              ],
+                            ElevatedButton.icon(
+                              onPressed: () => _openPayoutDialog(cashBalance),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: AppColors.secondary,
+                                padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
+                              ),
+                              icon: const Icon(Icons.send_to_mobile, size: 18),
+                              label: const Text('توريد العهدة للشركة', style: TextStyle(fontWeight: FontWeight.black)),
                             ),
                           ],
                         ),
                       ],
                     ),
-                  );
-                },
-              ),
-              const SizedBox(height: 24),
+                  ),
+                ),
+                const SizedBox(height: 20),
 
-              // كشف الحساب التفصيلي
-              const Text(
-                'سجل الحركات المالية وتوريد العهدة',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
-              ),
-              const SizedBox(height: 12),
-
-              statementAsync.when(
-                loading: () => const Center(child: CircularProgressIndicator()),
-                error: (err, _) => Center(child: Text('خطأ في تحميل كشف الحساب: $err')),
-                data: (entries) {
-                  if (entries.isEmpty) {
-                    return const Card(
-                      child: Padding(
-                        padding: EdgeInsets.all(24),
-                        child: Center(
-                          child: Text('لا توجد حركات مالية مسجلة حتى الآن.'),
-                        ),
-                      ),
-                    );
-                  }
-
-                  return ListView.separated(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemCount: entries.length,
-                    separatorBuilder: (_, __) => const SizedBox(height: 8),
-                    itemBuilder: (context, idx) {
-                      final item = entries[idx];
-                      final isCashIn = item.transactionType == 'CASH_COLLECTED';
-                      final isCommission = item.transactionType == 'COMMISSION_EARNED';
-
-                      return Card(
-                        child: ListTile(
-                          leading: CircleAvatar(
-                            backgroundColor: isCashIn
-                                ? AppColors.accent.withOpacity(0.15)
-                                : isCommission
-                                    ? AppColors.statusDelivered.withOpacity(0.15)
-                                    : AppColors.primaryLight.withOpacity(0.15),
-                            child: Icon(
-                              isCashIn
-                                  ? Icons.arrow_downward
-                                  : isCommission
-                                      ? Icons.star_border
-                                      : Icons.handshake,
-                              color: isCashIn
-                                  ? AppColors.accent
-                                  : isCommission
-                                      ? AppColors.statusDelivered
-                                      : AppColors.primaryLight,
-                              size: 20,
-                            ),
+                // سجل التوريدات السابقة
+                Card(
+                  child: Padding(
+                    padding: const EdgeInsets.all(20),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text('سجل عمليات توريد العهدة النقدية السابقة:', style: TextStyle(fontWeight: FontWeight.black, fontSize: 14)),
+                        const Divider(height: 20),
+                        if (history.isEmpty)
+                          const Padding(
+                            padding: EdgeInsets.all(20),
+                            child: Center(child: Text('لا توجد عمليات توريد سابقة مسجلة.')),
+                          )
+                        else
+                          ListView.separated(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemCount: history.length,
+                            separatorBuilder: (_, __) => const Divider(height: 12),
+                            itemBuilder: (ctx, i) {
+                              final item = history[i];
+                              return ListTile(
+                                dense: true,
+                                leading: const Icon(Icons.check_circle, color: AppColors.statusDelivered),
+                                title: Text('${item['amount']} ج.م', style: const TextStyle(fontWeight: FontWeight.bold)),
+                                subtitle: Text(item['notes'] ?? 'توريد نقدية'),
+                                trailing: Text(item['date'] ?? 'اليوم', style: const TextStyle(fontSize: 11, color: AppColors.textMuted)),
+                              );
+                            },
                           ),
-                          title: Text(
-                            _translateTransactionDescription(item.description),
-                            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
-                          ),
-                          subtitle: Text(
-                            '${item.createdAt.toLocal().toString().split('.')[0]} | مرجع: ${item.referenceCode ?? "N/A"}',
-                            style: const TextStyle(fontSize: 11, color: AppColors.textSecondary),
-                          ),
-                          trailing: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: [
-                              Text(
-                                '${isCashIn ? "+" : ""}${item.amount.toStringAsFixed(2)} ج.م',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 14,
-                                  color: isCommission
-                                      ? AppColors.statusDelivered
-                                      : isCashIn
-                                          ? AppColors.textPrimary
-                                          : AppColors.primaryLight,
-                                ),
-                              ),
-                              Text(
-                                'الرصيد: ${item.runningBalance.toStringAsFixed(2)} ج.م',
-                                style: const TextStyle(fontSize: 11, color: AppColors.textMuted),
-                              ),
-                            ],
-                          ),
-                        ),
-                      );
-                    },
-                  );
-                },
-              ),
-            ],
-          ),
-        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
       ),
     );
-  }
-
-  String _translateTransactionDescription(String desc) {
-    if (desc.contains('COD collected for delivered order')) {
-      return desc.replaceAll('COD collected for delivered order', 'تحصيل كاش لأوردر مسلم رقم');
-    }
-    if (desc.contains('Delivery commission')) {
-      return desc.replaceAll('Delivery commission', 'عمولة تسليم أوردر رقم');
-    }
-    return desc;
   }
 }

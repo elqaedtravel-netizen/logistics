@@ -4,66 +4,92 @@ import {
   Column,
   CreateDateColumn,
   UpdateDateColumn,
-  ManyToOne,
   OneToMany,
+  ManyToOne,
   JoinColumn,
-  Index,
 } from 'typeorm';
-import { OrderStatus } from '../../common/enums/order-status.enum';
-import { PaymentMethod, PaymentStatus } from '../../common/enums/payment-method.enum';
-import { PostponementReason } from '../../common/enums/postponement-reason.enum';
 import { User } from './user.entity';
 import { OrderItem } from './order-item.entity';
 import { OrderTrackingHistory } from './order-tracking-history.entity';
-import { DriverLedger } from './driver-ledger.entity';
-import { PaymentTransaction } from './payment-transaction.entity';
+import { Merchant } from './merchant.entity';
+
+export enum OrderStatus {
+  PENDING = 'Pending',
+  READY_FOR_PICKUP = 'Ready_For_Pickup',
+  IN_TRANSIT_TO_HUB = 'In_Transit_To_Hub',
+  AT_HUB = 'At_Hub',
+  OUT_FOR_DELIVERY = 'Out_For_Delivery',
+  DELIVERED = 'Delivered',
+  PARTIALLY_DELIVERED = 'Partially_Delivered',
+  POSTPONED = 'Postponed',
+  CANCELED = 'Canceled',
+  RTO = 'RTO', // Return To Origin
+}
+
+export enum PaymentMethod {
+  COD = 'CASH_ON_DELIVERY',
+  PAYMOB_CARD = 'PAYMOB_CARD',
+  PAYMOB_WALLET = 'PAYMOB_WALLET',
+  PAYMOB_MEEZA = 'PAYMOB_MEEZA',
+  INSTAPAY = 'INSTAPAY',
+}
+
+export enum PaymentStatus {
+  UNPAID = 'UNPAID',
+  PAID = 'PAID',
+  REFUNDED = 'REFUNDED',
+}
 
 @Entity('orders')
 export class Order {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Index({ unique: true })
-  @Column({ type: 'varchar', length: 50, unique: true })
+  @Column({ unique: true, nullable: false })
   order_number: string;
 
-  @Column({ type: 'uuid', nullable: true })
-  customer_id: string;
+  @Column({ nullable: true })
+  merchant_id: string;
 
-  @ManyToOne(() => User, (user) => user.orders_as_customer, { onDelete: 'SET NULL', nullable: true })
-  @JoinColumn({ name: 'customer_id' })
-  customer: User;
+  @ManyToOne(() => Merchant, { nullable: true, onDelete: 'SET NULL' })
+  @JoinColumn({ name: 'merchant_id' })
+  merchant: Merchant;
 
-  @Column({ type: 'varchar', length: 255 })
+  @Column({ nullable: false })
   customer_name: string;
 
-  @Column({ type: 'varchar', length: 50 })
+  @Column({ nullable: false })
   customer_phone: string;
 
-  @Column({ type: 'text' })
+  @Column({ nullable: true })
+  customer_secondary_phone: string;
+
+  @Column({ nullable: false })
   shipping_address: string;
 
-  @Column({ type: 'varchar', length: 100, default: 'Cairo' })
+  @Column({ nullable: false, default: 'القاهرة' })
   city: string;
 
-  @Column({ type: 'decimal', precision: 10, scale: 7, nullable: true })
-  geo_lat: number;
+  @Column({ nullable: false, default: 'القاهرة' })
+  governorate: string;
 
-  @Column({ type: 'decimal', precision: 10, scale: 7, nullable: true })
-  geo_lng: number;
+  @Column({ nullable: true })
+  zone_id: string;
 
-  @Index()
+  @Column({ nullable: true })
+  hub_id: string;
+
   @Column({
     type: 'enum',
     enum: OrderStatus,
-    default: OrderStatus.Pending,
+    default: OrderStatus.PENDING,
   })
   status: OrderStatus;
 
   @Column({
     type: 'enum',
     enum: PaymentMethod,
-    default: PaymentMethod.CASH_ON_DELIVERY,
+    default: PaymentMethod.COD,
   })
   payment_method: PaymentMethod;
 
@@ -74,63 +100,57 @@ export class Order {
   })
   payment_status: PaymentStatus;
 
-  @Column({ type: 'decimal', precision: 12, scale: 2 })
-  subtotal: number;
-
-  @Column({ type: 'decimal', precision: 12, scale: 2, default: 50.0 })
-  shipping_fee: number;
-
-  @Column({ type: 'decimal', precision: 12, scale: 2 })
+  @Column({ type: 'decimal', precision: 10, scale: 2, default: 0.0 })
   total_amount: number;
 
-  @Index()
-  @Column({ type: 'uuid', nullable: true })
+  @Column({ type: 'decimal', precision: 10, scale: 2, default: 0.0 })
+  collected_amount: number;
+
+  @Column({ type: 'decimal', precision: 6, scale: 2, default: 50.0 })
+  shipping_fee: number;
+
+  @Column({ type: 'decimal', precision: 6, scale: 2, default: 15.0 })
+  driver_commission: number;
+
+  @Column({ type: 'decimal', precision: 10, scale: 2, default: 0.0 })
+  merchant_net_payout: number;
+
+  @Column({ default: true })
+  is_cod: boolean;
+
+  @Column({ default: false })
+  is_partially_delivered: boolean;
+
+  @Column({ nullable: true })
   assigned_driver_id: string;
 
-  @ManyToOne(() => User, (user) => user.orders_as_driver, { onDelete: 'SET NULL', nullable: true })
+  @ManyToOne(() => User, { nullable: true, onDelete: 'SET NULL' })
   @JoinColumn({ name: 'assigned_driver_id' })
   assigned_driver: User;
 
-  @Column({ type: 'timestamp with time zone', nullable: true })
-  scheduled_delivery_date: Date;
+  @Column({ nullable: true })
+  waybill_qr_code: string;
 
-  @Column({
-    type: 'enum',
-    enum: PostponementReason,
-    nullable: true,
-  })
-  postponement_reason: PostponementReason;
+  @Column({ nullable: true })
+  postponement_reason: string;
 
-  @Column({ type: 'text', nullable: true })
-  postponement_notes: string;
+  @Column({ nullable: true })
+  rto_reason: string;
 
-  @Column({ type: 'text', nullable: true })
-  waybill_qr_code: string; // QR code data payload for waybill scanning
-
-  @Column({ type: 'timestamp with time zone', nullable: true })
-  delivered_at: Date;
-
-  @Column({ type: 'text', nullable: true })
-  delivery_signature_url: string;
-
-  @Column({ type: 'text', nullable: true })
-  delivery_notes: string;
+  @Column({ nullable: true })
+  notes: string;
 
   @OneToMany(() => OrderItem, (item) => item.order, { cascade: true })
   items: OrderItem[];
 
-  @OneToMany(() => OrderTrackingHistory, (history) => history.order)
+  @OneToMany(() => OrderTrackingHistory, (history) => history.order, {
+    cascade: true,
+  })
   tracking_history: OrderTrackingHistory[];
 
-  @OneToMany(() => DriverLedger, (ledger) => ledger.order)
-  ledger_records: DriverLedger[];
-
-  @OneToMany(() => PaymentTransaction, (payment) => payment.order)
-  payment_transactions: PaymentTransaction[];
-
-  @CreateDateColumn({ type: 'timestamp with time zone' })
+  @CreateDateColumn()
   created_at: Date;
 
-  @UpdateDateColumn({ type: 'timestamp with time zone' })
+  @UpdateDateColumn()
   updated_at: Date;
 }

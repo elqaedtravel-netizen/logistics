@@ -4,7 +4,7 @@ import {
   Column,
   ManyToOne,
   JoinColumn,
-  Index,
+  CreateDateColumn,
 } from 'typeorm';
 import { Order } from './order.entity';
 import { Product } from './product.entity';
@@ -14,34 +14,38 @@ export class OrderItem {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Index()
-  @Column({ type: 'uuid' })
+  @Column({ nullable: false })
   order_id: string;
 
   @ManyToOne(() => Order, (order) => order.items, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'order_id' })
   order: Order;
 
-  @Index()
-  @Column({ type: 'uuid' })
+  @Column({ nullable: false })
   product_id: string;
 
-  @ManyToOne(() => Product, (product) => product.order_items, { onDelete: 'RESTRICT' })
+  @ManyToOne(() => Product, { eager: true, onDelete: 'RESTRICT' })
   @JoinColumn({ name: 'product_id' })
   product: Product;
 
-  @Column({ type: 'varchar', length: 255 })
-  product_name: string;
-
-  @Column({ type: 'varchar', length: 100 })
-  product_sku: string;
-
-  @Column({ type: 'int' })
+  @Column({ type: 'int', default: 1 })
   quantity: number;
 
-  @Column({ type: 'decimal', precision: 12, scale: 2 })
+  @Column({ type: 'int', default: 1 })
+  delivered_quantity: number;
+
+  @Column({ type: 'int', default: 0 })
+  returned_quantity: number;
+
+  @Column({ type: 'decimal', precision: 10, scale: 2, nullable: false })
   unit_price: number;
 
-  @Column({ type: 'decimal', precision: 12, scale: 2 })
-  total_price: number;
+  @Column({ type: 'decimal', precision: 10, scale: 2, nullable: false })
+  subtotal: number;
+
+  @Column({ default: false })
+  is_rejected: boolean;
+
+  @CreateDateColumn()
+  created_at: Date;
 }

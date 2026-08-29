@@ -15,6 +15,9 @@ import { DriverLedgerModule } from './modules/driver-ledger/driver-ledger.module
 import { PaymentsModule } from './modules/payments/payments.module';
 import { NotificationsModule } from './modules/notifications/notifications.module';
 import { AnalyticsModule } from './modules/analytics/analytics.module';
+import { CompanySettingsModule } from './modules/company-settings/company-settings.module';
+import { SettlementEngineModule } from './modules/settlement-engine/settlement-engine.module';
+import { AdminManagementModule } from './modules/admin-management/admin-management.module';
 
 @Module({
   imports: [
@@ -35,6 +38,9 @@ import { AnalyticsModule } from './modules/analytics/analytics.module';
     PaymentsModule,
     NotificationsModule,
     AnalyticsModule,
+    CompanySettingsModule,
+    SettlementEngineModule,
+    AdminManagementModule,
   ],
   providers: [
     {

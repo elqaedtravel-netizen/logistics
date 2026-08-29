@@ -5,32 +5,35 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   OneToMany,
-  Index,
+  ManyToOne,
+  JoinColumn,
 } from 'typeorm';
-import { UserRole } from '../../common/enums/roles.enum';
-import { Order } from './order.entity';
-import { DriverLedger } from './driver-ledger.entity';
+
+export enum UserRole {
+  SUPER_ADMIN = 'SuperAdmin',
+  HUB_MANAGER = 'HubManager',
+  FINANCE_ADMIN = 'FinanceAdmin',
+  OPERATIONS_ADMIN = 'OperationsAdmin',
+  MERCHANT_ADMIN = 'MerchantAdmin',
+  DRIVER = 'Driver',
+  CUSTOMER = 'Customer',
+}
 
 @Entity('users')
 export class User {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Index({ unique: true })
-  @Column({ type: 'varchar', length: 255, unique: true })
+  @Column({ unique: true, nullable: false })
   email: string;
 
-  @Column({ type: 'varchar', length: 255, nullable: true })
+  @Column({ nullable: false })
   password_hash: string;
 
-  @Index({ unique: true, where: 'firebase_uid IS NOT NULL' })
-  @Column({ type: 'varchar', length: 255, nullable: true, unique: true })
-  firebase_uid: string;
-
-  @Column({ type: 'varchar', length: 255 })
+  @Column({ nullable: false })
   full_name: string;
 
-  @Column({ type: 'varchar', length: 50, nullable: true })
+  @Column({ nullable: true })
   phone: string;
 
   @Column({
@@ -40,27 +43,37 @@ export class User {
   })
   role: UserRole;
 
-  @Column({ type: 'boolean', default: true })
+  @Column('simple-array', { nullable: true, default: '' })
+  permissions: string[]; // e.g. ['orders.create', 'orders.dispatch', 'finance.settle', 'inventory.manage', 'users.manage', 'settings.edit']
+
+  @Column({ default: true })
   is_active: boolean;
 
+  @Column({ nullable: true })
+  hub_id: string;
+
+  // Driver-Specific Fields
+  @Column({ nullable: true })
+  national_id: string;
+
+  @Column({ nullable: true })
+  driving_license_number: string;
+
+  @Column({ nullable: true, default: 'موتوسيكل' })
+  vehicle_type: string; // موتوسيكل, سيارة, فان, تروسيكل
+
   @Column({ type: 'decimal', precision: 5, scale: 2, default: 10.0 })
-  commission_rate: number; // Commission percentage for drivers
+  commission_percentage: number;
 
-  @Column({ type: 'text', nullable: true })
-  fcm_token: string;
+  @Column({ type: 'decimal', precision: 10, scale: 2, default: 0.0 })
+  current_cash_in_hand: number;
 
-  @OneToMany(() => Order, (order) => order.customer)
-  orders_as_customer: Order[];
+  @Column({ nullable: true })
+  assigned_zone_id: string;
 
-  @OneToMany(() => Order, (order) => order.assigned_driver)
-  orders_as_driver: Order[];
-
-  @OneToMany(() => DriverLedger, (ledger) => ledger.driver)
-  ledger_entries: DriverLedger[];
-
-  @CreateDateColumn({ type: 'timestamp with time zone' })
+  @CreateDateColumn()
   created_at: Date;
 
-  @UpdateDateColumn({ type: 'timestamp with time zone' })
+  @UpdateDateColumn()
   updated_at: Date;
 }

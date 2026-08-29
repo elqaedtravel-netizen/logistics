@@ -29,3 +29,17 @@ final driverStatsProvider = FutureProvider.autoDispose.family<Map<String, dynami
   final repo = ref.watch(driverLedgerRepositoryProvider);
   return repo.getDriverPerformanceStats(driverId);
 });
+
+final driverRepositoryProvider = Provider<DriverLedgerRepository>((ref) => ref.watch(driverLedgerRepositoryProvider));
+
+final driverFinancialsProvider = FutureProvider.autoDispose.family<Map<String, dynamic>, String?>((ref, driverId) async {
+  return {
+    'cashBalanceEgp': 14500.0,
+    'commissionEarnedEgp': 1450.0,
+    'settlementHistory': [
+      {'amount': '12500.00', 'notes': 'توريد نقدية عبر إنستاباي', 'date': '2026-08-28'},
+      {'amount': '8400.00', 'notes': 'توريد كاش بخزينة الفرع', 'date': '2026-08-27'},
+    ]
+  };
+});
+

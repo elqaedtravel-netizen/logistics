@@ -27,7 +27,6 @@ jobs:
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.19.x'
           channel: 'stable'
           cache: true
 
@@ -35,10 +34,17 @@ jobs:
         working-directory: ./frontend
         run: |
           flutter create --platforms=android --org=io.antigravity.logistics .
-          # Ensure minSdkVersion is 21 for mobile_scanner
-          sed -i 's/minSdkVersion flutter.minSdkVersion/minSdkVersion 21/g' android/app/build.gradle || true
-          sed -i 's/minSdkVersion [0-9]*/minSdkVersion 21/g' android/app/build.gradle || true
+          # Ensure minSdkVersion is at least 21 for mobile_scanner & modern plugins
+          if [ -f "android/app/build.gradle" ]; then
+            sed -i 's/minSdkVersion flutter.minSdkVersion/minSdkVersion 21/g' android/app/build.gradle || true
+            sed -i 's/minSdkVersion [0-9]*/minSdkVersion 21/g' android/app/build.gradle || true
+          fi
+          if [ -f "android/app/build.gradle.kts" ]; then
+            sed -i 's/minSdk = flutter.minSdkVersion/minSdk = 21/g' android/app/build.gradle.kts || true
+            sed -i 's/minSdk = [0-9]*/minSdk = 21/g' android/app/build.gradle.kts || true
+          fi
           flutter pub get
+          flutter analyze --no-fatal-infos
 
       - name: Build Android Release APK
         working-directory: ./frontend
@@ -61,7 +67,6 @@ jobs:
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.19.x'
           channel: 'stable'
           cache: true
 
@@ -71,6 +76,7 @@ jobs:
           flutter config --enable-windows-desktop
           flutter create --platforms=windows --org=io.antigravity.logistics .
           flutter pub get
+          flutter analyze --no-fatal-infos
 
       - name: Build Windows Desktop Release
         working-directory: ./frontend
@@ -96,7 +102,6 @@ jobs:
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.19.x'
           channel: 'stable'
           cache: true
 
@@ -106,6 +111,7 @@ jobs:
           flutter config --enable-web
           flutter create --platforms=web --org=io.antigravity.logistics .
           flutter pub get
+          flutter analyze --no-fatal-infos
           flutter build web --release --base-href "/logistics/"
 
       - name: Upload Web Build Artifact
@@ -114,3 +120,4 @@ jobs:
           name: Logistics-Web-App
           path: frontend/build/web
           retention-days: 14
+

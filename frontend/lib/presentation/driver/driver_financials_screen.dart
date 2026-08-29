@@ -79,17 +79,17 @@ class _DriverFinancialsScreenState extends ConsumerState<DriverFinancialsScreen>
                   ? null
                   : () async {
                       setDialogState(() => isSubmitting = true);
-                      try {
-                        await ref.read(driverRepositoryProvider).settleDriverLedger(
+                        await ref.read(driverLedgerRepositoryProvider).recordSettlementPayout(
                               widget.driverId ?? 'default_driver',
                               cashBalance,
-                              settlementNotes: 'تم التوريد عبر: $selectedMethod | مرجع: ${refController.text.trim()}',
+                              'تم التوريد عبر: $selectedMethod | مرجع: ${refController.text.trim()}',
                             );
                         ref.refresh(driverFinancialsProvider(widget.driverId));
                         Navigator.of(ctx).pop();
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(content: Text('✅ تم تسجيل توريد العهدة النقدية بنجاح!'), backgroundColor: AppColors.statusDelivered),
                         );
+
                       } catch (e) {
                         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('خطأ: $e')));
                       }

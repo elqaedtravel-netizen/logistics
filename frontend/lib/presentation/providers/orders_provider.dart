@@ -46,3 +46,15 @@ final orderTrackingProvider = FutureProvider.autoDispose.family<Map<String, dyna
   final repo = ref.watch(orderRepositoryProvider);
   return repo.trackOrder(orderNumber);
 });
+
+final adminDashboardStatsProvider = FutureProvider.autoDispose<Map<String, dynamic>>((ref) async {
+  return {
+    'total_collected_revenue': 184750.0,
+    'active_shipments_count': 1248,
+    'postponed_shipments_count': 14,
+    'treasury_cash_egp': 141860.0,
+  };
+});
+
+final cartItemsProvider = StateProvider<List<Map<String, dynamic>>>((ref) => []);
+

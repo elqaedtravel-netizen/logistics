@@ -1,5 +1,5 @@
 class AppConstants {
-  static const String appName = 'أنتيجرافيتي للشحن واللوجستيات';
+  static const String appName = 'أنتيجرافيتي إكسبريس للخدمات اللوجستية';
   static const String apiBaseUrl = 'http://localhost:3000/api/v1';
 
   // Storage Keys
@@ -8,7 +8,7 @@ class AppConstants {
   static const String keyUserId = 'user_id';
   static const String keyUserName = 'user_name';
 
-  // Order Lifecycle Statuses in Egyptian Logistics Terminology
+  // 7 Strict Order Statuses in Egyptian Arabic
   static const Map<String, String> orderStatusArabic = {
     'Pending': 'قيد الانتظار',
     'In_Warehouse': 'في المخزن',
@@ -18,6 +18,37 @@ class AppConstants {
     'Canceled': 'ملغي',
     'Returned': 'مرتجع للمخزن',
   };
+
+  // Egyptian Governorates List (قائمة المحافظات المصرية لتسهيل الفرز وتحديد تكلفة الشحن)
+  static const List<String> egyptianGovernorates = [
+    'القاهرة',
+    'الجيزة',
+    'الإسكندرية',
+    'القليوبية',
+    'الدقهلية',
+    'الشرقية',
+    'المنوفية',
+    'الغربية',
+    'البحيرة',
+    'كفر الشيخ',
+    'دمياط',
+    'بورسعيد',
+    'الإسماعيلية',
+    'السويس',
+    'الفيوم',
+    'بني سويف',
+    'المنيا',
+    'أسيوط',
+    'سوهاج',
+    'قنا',
+    'الأقصر',
+    'أسوان',
+    'البحر الأحمر',
+    'جنوب سيناء',
+    'شمال سيناء',
+    'مطروح',
+    'الوادي الجديد',
+  ];
 
   // Postponement Reasons in Egyptian Arabic
   static const List<Map<String, String>> postponementReasons = [
@@ -31,27 +62,27 @@ class AppConstants {
     },
     {
       'code': 'CUSTOMER_REFUSED_DELIVERY_TEMPORARILY',
-      'label': 'العميل غير متواجد بالعنوان مؤقتاً',
+      'label': 'العميل غير متواجد بالعنوان حالياً',
     },
     {
       'code': 'INCORRECT_ADDRESS',
-      'label': 'عنوان التوصيل غير دقيق أو ناقص',
+      'label': 'عنوان التوصيل غير دقيق أو ينقصه معالم',
     },
     {
       'code': 'OUT_OF_ROUTE_TIME',
-      'label': 'انتهاء وقت خط السير اليومي',
+      'label': 'انتهاء ساعات خط السير والتشغيل اليومي',
     },
     {
       'code': 'WEATHER_OR_ROAD_BLOCKAGE',
-      'label': 'ظروف جوية أو إغلاق طرق',
+      'label': 'ظروف جوية أو إغلاق وتحويلات مرورية',
     },
     {
       'code': 'CASH_NOT_AVAILABLE',
-      'label': 'المبلغ النقدي غير متوفر مع العميل حالياً',
+      'label': 'المبلغ النقدي غير متوفر مع العميل الآن',
     },
     {
       'code': 'OTHER',
-      'label': 'سبب تشغيلي آخر',
+      'label': 'سبب تشغيلي أو لوجستي آخر',
     },
   ];
 
@@ -62,9 +93,18 @@ class AppConstants {
   static const String paymentPaymobMeeza = 'PAYMOB_MEEZA';
 
   static const Map<String, String> paymentMethodArabic = {
-    'CASH_ON_DELIVERY': 'دفع عند الاستلام (كاش)',
+    'CASH_ON_DELIVERY': 'دفع عند الاستلام (كاش مع المندوب)',
     'PAYMOB_CARD': 'فيزا / ماستركارد (باي موب)',
     'PAYMOB_MEEZA': 'بطاقة ميزة الوطنية',
     'PAYMOB_WALLET': 'محفظة إلكترونية (فودافون كاش / إنستاباي)',
   };
+
+  // Warehouse Zones in Cairo Central Hub
+  static const List<String> warehouseZones = [
+    'مخزن القاهرة المركزي - قطاع A12 (إلكترونيات)',
+    'مخزن القاهرة المركزي - قطاع B04 (أجهزة ذكية)',
+    'مخزن القاهرة المركزي - قطاع C08 (أزياء وملابس)',
+    'مخزن الجيزة السريع - قطاع G01 (سريع التداول)',
+    'مخزن الإسكندرية اللوجستي - قطاع ALX (البحري)',
+  ];
 }

@@ -6,6 +6,8 @@ import '../../core/constants/app_constants.dart';
 import '../../data/models/order_model.dart';
 import '../providers/orders_provider.dart';
 import '../shared/status_badge.dart';
+import '../shared/swipe_to_action_button.dart';
+import '../shared/order_timeline_widget.dart';
 
 class DriverOrderActionScreen extends ConsumerStatefulWidget {
   final OrderModel order;
@@ -27,93 +29,37 @@ class _DriverOrderActionScreenState extends ConsumerState<DriverOrderActionScree
     }
   }
 
-  void _showDeliverDialog() {
-    final notesController = TextEditingController();
+  void _openGoogleMaps() async {
+    final query = Uri.encodeComponent('${widget.order.shippingAddress}, ${widget.order.city}, Egypt');
+    final uri = Uri.parse('https://www.google.com/maps/search/?api=1&query=$query');
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri);
+    }
+  }
 
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Row(
-          children: [
-            Icon(Icons.check_circle, color: AppColors.statusDelivered),
-            SizedBox(width: 8),
-            Text('تأكيد تسليم الأوردر للعميل'),
-          ],
+  void _handleSwipeDelivery() async {
+    setState(() => _isSubmitting = true);
+    try {
+      await ref.read(orderRepositoryProvider).deliverOrder(
+            widget.order.id,
+            notes: 'تم التسليم باليد للعميل وتأكيد تحصيل المبلغ عبر تطبيق المندوب.',
+          );
+      ref.refresh(driverAssignedOrdersProvider(null));
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('🎉 تم تأكيد التسليم وتحصيل العهدة النقدية بنجاح!'),
+          backgroundColor: AppColors.statusDelivered,
         ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('أوردر رقم: #${widget.order.orderNumber}', style: const TextStyle(fontWeight: FontWeight.bold)),
-            const SizedBox(height: 8),
-            if (widget.order.isCod)
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: AppColors.accent.withOpacity(0.15),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Row(
-                  children: [
-                    const Icon(Icons.payments, color: AppColors.accent),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: Text(
-                        'تأكد من تحصيل مبلغ ${widget.order.totalAmount.toStringAsFixed(2)} ج.م نقداً من العميل.',
-                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
-                      ),
-                    ),
-                  ],
-                ),
-              )
-            else
-              const Text('✅ مدفوع أونلاين. لا يتم تحصيل أي مبالغ نقدية.'),
-            const SizedBox(height: 16),
-            TextField(
-              controller: notesController,
-              decoration: const InputDecoration(
-                labelText: 'ملاحظات التسليم (اختياري)',
-                hintText: 'مثال: تم الاستلام باليد والتوقيع على البوليصة',
-              ),
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(),
-            child: const Text('إلغاء'),
-          ),
-          ElevatedButton(
-            onPressed: () async {
-              Navigator.of(ctx).pop();
-              setState(() => _isSubmitting = true);
-              try {
-                await ref.read(orderRepositoryProvider).deliverOrder(
-                      widget.order.id,
-                      notes: notesController.text.trim(),
-                    );
-                ref.refresh(driverAssignedOrdersProvider(null));
-                if (!mounted) return;
-                Navigator.of(context).pop();
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('تم تسليم الأوردر وتحديث العهدة النقدية بنجاح!'),
-                    backgroundColor: AppColors.statusDelivered,
-                  ),
-                );
-              } catch (e) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('فشل التسليم: $e')),
-                );
-              } finally {
-                setState(() => _isSubmitting = false);
-              }
-            },
-            child: const Text('تأكيد التسليم'),
-          ),
-        ],
-      ),
-    );
+      );
+      Navigator.of(context).pop();
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('فشل تأكيد التسليم: $e'), backgroundColor: AppColors.statusCanceled),
+      );
+    } finally {
+      if (mounted) setState(() => _isSubmitting = false);
+    }
   }
 
   void _showPostponeDialog() {
@@ -124,6 +70,7 @@ class _DriverOrderActionScreenState extends ConsumerState<DriverOrderActionScree
       context: context,
       builder: (ctx) => StatefulBuilder(
         builder: (context, setDialogState) => AlertDialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
           title: const Row(
             children: [
               Icon(Icons.schedule, color: AppColors.statusPostponed),
@@ -132,53 +79,34 @@ class _DriverOrderActionScreenState extends ConsumerState<DriverOrderActionScree
             ],
           ),
           content: SizedBox(
-            width: 450,
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    'اختر سبب التأجيل الإلزامي:',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
-                  ),
-                  const SizedBox(height: 8),
-                  DropdownButtonFormField<String>(
-                    value: selectedReason,
-                    isExpanded: true,
-                    decoration: const InputDecoration(isDense: true),
-                    items: AppConstants.postponementReasons.map((r) {
-                      return DropdownMenuItem<String>(
-                        value: r['code'],
-                        child: Text(
-                          r['label']!,
-                          style: const TextStyle(fontSize: 12),
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      );
-                    }).toList(),
-                    onChanged: (val) {
-                      if (val != null) setDialogState(() => selectedReason = val);
-                    },
-                  ),
-                  const SizedBox(height: 16),
-                  TextField(
-                    controller: notesController,
-                    maxLines: 3,
-                    decoration: const InputDecoration(
-                      labelText: 'ملاحظات المندوب التشغيلية',
-                      hintText: 'مثال: طلب العميل إعادة المحاولة غداً بعد الساعة ٤ عصراً',
-                    ),
-                  ),
-                ],
-              ),
+            width: 440,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text('سبب التأجيل الإلزامي لتقرير خط السير:', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+                const SizedBox(height: 8),
+                DropdownButtonFormField<String>(
+                  value: selectedReason,
+                  isExpanded: true,
+                  items: AppConstants.postponementReasons.map((r) {
+                    return DropdownMenuItem(value: r['code'], child: Text(r['label']!, style: const TextStyle(fontSize: 12)));
+                  }).toList(),
+                  onChanged: (val) {
+                    if (val != null) setDialogState(() => selectedReason = val);
+                  },
+                ),
+                const SizedBox(height: 14),
+                TextField(
+                  controller: notesController,
+                  maxLines: 2,
+                  decoration: const InputDecoration(labelText: 'ملاحظات المندوب (مثال: طلب موعد بديل غداً)', isDense: true),
+                ),
+              ],
             ),
           ),
           actions: [
-            TextButton(
-              onPressed: () => Navigator.of(ctx).pop(),
-              child: const Text('إلغاء'),
-            ),
+            TextButton(onPressed: () => Navigator.of(ctx).pop(), child: const Text('إلغاء')),
             ElevatedButton(
               style: ElevatedButton.styleFrom(backgroundColor: AppColors.statusPostponed),
               onPressed: () async {
@@ -194,17 +122,12 @@ class _DriverOrderActionScreenState extends ConsumerState<DriverOrderActionScree
                   if (!mounted) return;
                   Navigator.of(context).pop();
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('تم تسجيل تأجيل الأوردر وإعادة الجدولة.'),
-                      backgroundColor: AppColors.statusPostponed,
-                    ),
+                    const SnackBar(content: Text('⏱️ تم تأجيل الشحنة وإعادة الجدولة بنجاح.'), backgroundColor: AppColors.statusPostponed),
                   );
                 } catch (e) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('فشل التأجيل: $e')),
-                  );
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('خطأ: $e')));
                 } finally {
-                  setState(() => _isSubmitting = false);
+                  if (mounted) setState(() => _isSubmitting = false);
                 }
               },
               child: const Text('تأكيد التأجيل'),
@@ -220,92 +143,111 @@ class _DriverOrderActionScreenState extends ConsumerState<DriverOrderActionScree
     final order = widget.order;
 
     return Scaffold(
+      backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: Text('أوردر #${order.orderNumber}'),
+        title: Text('شحنة #${order.orderNumber}', style: const TextStyle(fontWeight: FontWeight.black)),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // كارت الحالة والمبلغ
+            // بطاقة رأس الأوردر والمبلغ
             Card(
+              elevation: 2,
               child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                padding: const EdgeInsets.all(20),
+                child: Column(
                   children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text('حالة الشحنة', style: TextStyle(color: AppColors.textSecondary, fontSize: 12)),
-                        const SizedBox(height: 4),
-                        StatusBadge(status: order.status),
-                      ],
-                    ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        const Text('المبلغ المطلوب تحصيله', style: TextStyle(color: AppColors.textSecondary, fontSize: 12)),
-                        const SizedBox(height: 4),
+                        StatusBadge(status: order.status, fontSize: 13),
                         Text(
-                          order.isCod ? '${order.totalAmount.toStringAsFixed(2)} ج.م' : '٠.٠٠ ج.م (مدفوع)',
+                          order.isCod ? 'تحصيل كاش' : 'مدفوع أونلاين',
                           style: TextStyle(
-                            fontSize: 18,
                             fontWeight: FontWeight.bold,
+                            fontSize: 12,
                             color: order.isCod ? AppColors.accent : AppColors.statusDelivered,
                           ),
                         ),
                       ],
                     ),
+                    const Divider(height: 24),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('المبلغ المطلوب تحصيله باليد:', style: TextStyle(fontSize: 12, color: AppColors.textSecondary)),
+                            Text('يشمل مصاريف الشحن', style: TextStyle(fontSize: 10, color: AppColors.textMuted)),
+                          ],
+                        ),
+                        Text(
+                          order.isCod ? '${order.totalAmount.toStringAsFixed(2)} ج.م' : '٠.٠٠ ج.م',
+                          style: TextStyle(
+                            fontSize: 26,
+                            fontWeight: FontWeight.black,
+                            color: order.isCod ? AppColors.accent : AppColors.statusDelivered,
+                            fontFamily: 'monospace',
+                          ),
+                        ),
+                      ],
+                    ),
                   ],
                 ),
               ),
             ),
             const SizedBox(height: 16),
 
-            // كارت العميل وعنوان التوصيل
+            // بطاقة بيانات العميل وأزرار الاتصال والموقع
             Card(
               child: Padding(
-                padding: const EdgeInsets.all(16),
+                padding: const EdgeInsets.all(20),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      'بيانات العميل ومكان التوصيل',
-                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
-                    ),
-                    const Divider(height: 20),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(order.customerName, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
-                              const SizedBox(height: 2),
-                              Text(order.customerPhone, style: const TextStyle(color: AppColors.textSecondary, fontFamily: 'monospace')),
-                            ],
-                          ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(order.customerName, style: const TextStyle(fontWeight: FontWeight.black, fontSize: 16)),
+                            const SizedBox(height: 2),
+                            Text(order.customerPhone, style: const TextStyle(color: AppColors.textSecondary, fontFamily: 'monospace', fontSize: 13)),
+                          ],
                         ),
-                        IconButton.filled(
-                          onPressed: _callCustomer,
-                          icon: const Icon(Icons.phone, color: Colors.white),
-                          style: IconButton.styleFrom(backgroundColor: AppColors.primary),
+                        Row(
+                          children: [
+                            IconButton.filled(
+                              onPressed: _openGoogleMaps,
+                              icon: const Icon(Icons.navigation, color: Colors.white, size: 20),
+                              style: IconButton.styleFrom(backgroundColor: AppColors.brandSecondary),
+                              tooltip: 'فتح خرائط جوجل',
+                            ),
+                            const SizedBox(width: 8),
+                            IconButton.filled(
+                              onPressed: _callCustomer,
+                              icon: const Icon(Icons.phone, color: Colors.white, size: 20),
+                              style: IconButton.styleFrom(backgroundColor: AppColors.statusDelivered),
+                              tooltip: 'اتصال هاتفي بالعميل',
+                            ),
+                          ],
                         ),
                       ],
                     ),
-                    const SizedBox(height: 12),
+                    const Divider(height: 20),
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Icon(Icons.location_on, color: AppColors.primaryLight, size: 20),
+                        const Icon(Icons.location_on, color: AppColors.accent, size: 20),
                         const SizedBox(width: 8),
                         Expanded(
                           child: Text(
                             '${order.shippingAddress}، ${order.city}',
-                            style: const TextStyle(fontSize: 14),
+                            style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold, height: 1.4),
                           ),
                         ),
                       ],
@@ -316,57 +258,55 @@ class _DriverOrderActionScreenState extends ConsumerState<DriverOrderActionScree
             ),
             const SizedBox(height: 16),
 
-            // محتويات الشحنة
+            // الخط الزمني لمراحل الشحنة
             Card(
               child: Padding(
-                padding: const EdgeInsets.all(16),
+                padding: const EdgeInsets.all(20),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text('محتويات الأوردر', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
-                    const SizedBox(height: 8),
-                    ...order.items.map(
-                      (i) => Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 4),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text('• ${i.productName} (العدد: ${i.quantity})'),
-                            Text('${i.totalPrice.toStringAsFixed(2)} ج.م', style: const TextStyle(fontWeight: FontWeight.bold)),
-                          ],
-                        ),
-                      ),
-                    ),
+                    const Text('تتبع مراحل ودورة الشحنة:', style: TextStyle(fontWeight: FontWeight.black, fontSize: 14)),
+                    const Divider(height: 20),
+                    OrderTimelineWidget(currentStatus: order.status, timelineHistory: const []),
                   ],
                 ),
               ),
             ),
             const SizedBox(height: 24),
 
-            // أزرار الإجراءات
+            // أزرار الإجراءات التفاعلية (Swipe to deliver)
             if (_isSubmitting)
               const Center(child: CircularProgressIndicator())
-            else ...[
-              ElevatedButton.icon(
-                onPressed: _showDeliverDialog,
-                icon: const Icon(Icons.check_circle_outline),
-                label: Text(order.isCod ? 'تحصيل الكاش وتأكيد التسليم' : 'تأكيد تسليم الأوردر للعميل'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.statusDelivered,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                ),
+            else if (order.status != 'Delivered') ...[
+              SwipeToActionButton(
+                text: order.isCod
+                    ? 'اسحب لتأكيد التسليم وتحصيل الكاش'
+                    : 'اسحب لتأكيد تسليم الأوردر للعميل',
+                onSwiped: _handleSwipeDelivery,
               ),
               const SizedBox(height: 12),
               OutlinedButton.icon(
                 onPressed: _showPostponeDialog,
                 icon: const Icon(Icons.schedule, color: AppColors.statusPostponed),
-                label: const Text('تأجيل موعد التسليم (يتطلب تحديد سبب)', style: TextStyle(color: AppColors.statusPostponed, fontWeight: FontWeight.bold)),
+                label: const Text('تأجيل موعد التسليم (تسجيل سبب إلزامي)', style: TextStyle(color: AppColors.statusPostponed, fontWeight: FontWeight.bold)),
                 style: OutlinedButton.styleFrom(
                   side: const BorderSide(color: AppColors.statusPostponed),
-                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  padding: const EdgeInsets.symmetric(vertical: 14),
                 ),
               ),
-            ],
+            ] else
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(color: AppColors.statusDelivered.withOpacity(0.15), borderRadius: BorderRadius.circular(12)),
+                child: const Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.check_circle, color: AppColors.statusDelivered),
+                    SizedBox(width: 8),
+                    Text('تم تسليم هذا الأوردر بنجاح وتم توريد حسابه.', style: TextStyle(fontWeight: FontWeight.bold, color: AppColors.statusDelivered)),
+                  ],
+                ),
+              ),
           ],
         ),
       ),

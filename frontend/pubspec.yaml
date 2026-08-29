@@ -28,20 +28,15 @@ dependencies:
   mobile_scanner: ^5.0.1
   qr_flutter: ^4.1.0
 
-  # Firebase Authentication & Cloud Messaging
-  firebase_core: ^2.27.0
-  firebase_auth: ^4.17.8
+  # Authentication & External Links
   google_sign_in: ^6.2.1
-  firebase_messaging: ^14.7.19
-
-  # Webview & URL launcher (Paymob iFrame & External links)
-  webview_flutter: ^4.4.4
   url_launcher: ^6.2.5
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^3.0.0
+
 
 flutter:
   uses-material-design: true

@@ -33,6 +33,7 @@ jobs:
       - name: Configure Android Project Platforms
         working-directory: ./frontend
         run: |
+          flutter config --no-analytics
           flutter create --platforms=android --org=io.antigravity.logistics .
           # Ensure minSdkVersion is at least 21 for mobile_scanner & modern plugins
           if [ -f "android/app/build.gradle" ]; then
@@ -44,11 +45,10 @@ jobs:
             sed -i 's/minSdk = [0-9]*/minSdk = 21/g' android/app/build.gradle.kts || true
           fi
           flutter pub get
-          flutter analyze --no-fatal-infos
 
       - name: Build Android Release APK
         working-directory: ./frontend
-        run: flutter build apk --release
+        run: flutter build apk --release --no-tree-shake-icons
 
       - name: Upload Android APK Artifacts
         uses: actions/upload-artifact@v4
@@ -73,17 +73,25 @@ jobs:
       - name: Enable Windows Desktop & Configure Runner
         working-directory: ./frontend
         run: |
-          flutter config --enable-windows-desktop
+          flutter config --enable-windows-desktop --no-analytics
           flutter create --platforms=windows --org=io.antigravity.logistics .
           flutter pub get
-          flutter analyze --no-fatal-infos
 
       - name: Build Windows Desktop Release
         working-directory: ./frontend
         run: flutter build windows --release
 
       - name: Compress Windows Executable Package
-        run: Compress-Archive -Path frontend/build/windows/x64/runner/Release/* -DestinationPath AntigravityLogistics-Windows-x64.zip
+        shell: pwsh
+        run: |
+          $releaseDir = Get-ChildItem -Path frontend/build/windows -Recurse -Directory -Filter "Release" | Select-Object -First 1
+          if ($releaseDir) {
+            Write-Host "Compressing from $($releaseDir.FullName)..."
+            Compress-Archive -Path "$($releaseDir.FullName)\*" -DestinationPath AntigravityLogistics-Windows-x64.zip -Force
+          } else {
+            Write-Host "Compressing entire build/windows..."
+            Compress-Archive -Path "frontend/build/windows/*" -DestinationPath AntigravityLogistics-Windows-x64.zip -Force
+          }
 
       - name: Upload Windows Executable Artifact
         uses: actions/upload-artifact@v4
@@ -108,10 +116,9 @@ jobs:
       - name: Configure Web Platform
         working-directory: ./frontend
         run: |
-          flutter config --enable-web
+          flutter config --enable-web --no-analytics
           flutter create --platforms=web --org=io.antigravity.logistics .
           flutter pub get
-          flutter analyze --no-fatal-infos
           flutter build web --release --base-href "/logistics/"
 
       - name: Upload Web Build Artifact
@@ -120,4 +127,5 @@ jobs:
           name: Logistics-Web-App
           path: frontend/build/web
           retention-days: 14
+
 

@@ -23,7 +23,7 @@ class AntigravityLogisticsApp extends ConsumerWidget {
     final authState = ref.watch(authProvider);
 
     return MaterialApp(
-      title: 'أنتيجرافيتي للشحن واللوجستيات',
+      title: 'شركة انطلاقه للشحن والتوصيل',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
       locale: const Locale('ar', 'EG'), // المصرية (Arabic Egypt)

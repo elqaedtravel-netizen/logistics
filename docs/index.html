@@ -2,13 +2,18 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8">
-  <title>منظومة أنتيجرافيتي إكسبريس - المنصة اللوجستية الشاملة والمتجر الإلكتروني</title>
+  <title>شركة انطلاقه للشحن والتوصيل - المنصة اللوجستية الشاملة والمتجر الإلكتروني</title>
   <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <style>
     * { font-family: 'Cairo', system-ui, -apple-system, sans-serif; }
+    :root {
+      --store-primary-color: #1B1A55;
+      --store-accent-color: #FF6500;
+      --store-card-radius: 1.5rem;
+    }
     .gradient-hero {
       background: linear-gradient(135deg, #070F2B 0%, #1B1A55 50%, #535C91 100%);
     }
@@ -27,61 +32,84 @@
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col antialiased">
 
-  <!-- ==================== الهيدر الرئيسي الموحد حسب الترتيب الدقيق المطلوب ==================== -->
+  <!-- ==================== الهيدر الرئيسي الموحد لشركة انطلاقه ==================== -->
   <header class="bg-slate-900 border-b border-slate-800 px-6 py-3 sticky top-0 z-50 backdrop-blur flex flex-wrap items-center justify-between gap-4">
-    <!-- الشعار واسم المنصة -->
+    <!-- الشعار واسم الشركة الرسمي: شركة انطلاقه للشحن والتوصيل -->
     <div class="flex items-center gap-3 cursor-pointer" onclick="setRole('storefront')">
-      <div class="bg-gradient-to-br from-blue-600 to-indigo-700 p-2.5 rounded-2xl text-white shadow-lg flex items-center justify-center">
+      <div class="bg-gradient-to-br from-orange-600 to-amber-600 p-2.5 rounded-2xl text-white shadow-lg flex items-center justify-center font-black">
         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
       </div>
       <div>
         <div class="flex items-center gap-2">
-          <h1 class="font-black text-base tracking-wide text-white">متجر ومنظومة أنتيجرافيتي إكسبريس</h1>
-          <span class="px-2 py-0.5 bg-blue-500/20 text-blue-400 text-[10px] font-extrabold rounded-md border border-blue-500/30">Official Enterprise</span>
+          <h1 class="font-black text-base tracking-wide text-white">شركة انطلاقه للشحن والتوصيل</h1>
+          <span class="px-2 py-0.5 bg-orange-500/20 text-orange-400 text-[10px] font-extrabold rounded-md border border-orange-500/30">Official Egypt</span>
         </div>
-        <p class="text-[11px] text-slate-400">التجارة الإلكترونية والشحن السريع وإدارة العمليات اللوجستية 🇪🇬</p>
+        <p class="text-[11px] text-slate-400">خدمات الشحن السريع، التجارة الإلكترونية وإدارة خطوط التوزيع 🇪🇬</p>
       </div>
     </div>
 
-    <!-- عناصر الهيدر المرتبة بالترتيب المطلوب بدقة: -->
-    <!-- 1. تسجيل الدخول وتبديل الواجهة | 2. تتبع الشحنات | 3. الاقتراحات والشكاوى | 4. سلة المشتريات -->
+    <!-- قائمة الهيدر التفاعلية والسياقية -->
     <div class="flex items-center flex-wrap gap-2.5">
       
-      <!-- 1. حقل تسجيل الدخول وتبديل الواجهة بين المدير والمندوب والمتجر -->
+      <!-- محول الأدوار وتبديل الواجهات مع فحص تسجيل الدخول -->
       <div class="flex items-center bg-slate-950 p-1 rounded-2xl border border-slate-800 gap-1 shadow-inner text-xs">
-        <button onclick="setRole('admin')" id="role-btn-admin" class="role-btn px-3.5 py-1.5 rounded-xl font-bold transition flex items-center gap-1.5 text-slate-400 hover:text-white">
+        <button onclick="handleRoleSwitchClick('admin')" id="role-btn-admin" class="role-btn px-3.5 py-1.5 rounded-xl font-bold transition flex items-center gap-1.5 text-slate-400 hover:text-white">
           👑 المدير العام
         </button>
-        <button onclick="setRole('driver')" id="role-btn-driver" class="role-btn px-3.5 py-1.5 rounded-xl font-bold transition flex items-center gap-1.5 text-slate-400 hover:text-white">
+        <button onclick="handleRoleSwitchClick('driver')" id="role-btn-driver" class="role-btn px-3.5 py-1.5 rounded-xl font-bold transition flex items-center gap-1.5 text-slate-400 hover:text-white">
           🛵 المندوب
         </button>
-        <button onclick="setRole('storefront')" id="role-btn-storefront" class="role-btn px-3.5 py-1.5 rounded-xl font-black transition flex items-center gap-1.5 bg-blue-600 text-white shadow">
+        <button onclick="handleRoleSwitchClick('storefront')" id="role-btn-storefront" class="role-btn px-3.5 py-1.5 rounded-xl font-black transition flex items-center gap-1.5 bg-orange-600 text-white shadow">
           🛍️ متجر العملاء
         </button>
       </div>
 
-      <!-- 2. قسم تتبع الشحنات -->
-      <button onclick="openModal('modal-track-shipment')" class="bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-sm">
-        🔍 تتبع الشحنات
-      </button>
+      <!-- عناصر الهيدر الخاصة بالعملاء فقط (تتبع، شكاوى، سلة) -->
+      <div id="header-customer-nav" class="flex items-center gap-2.5">
+        <!-- 2. تتبع الشحنات -->
+        <button onclick="openModal('modal-track-shipment')" class="bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-sm">
+          🔍 تتبع الشحنات
+        </button>
 
-      <!-- 3. قسم الاقتراحات والشكاوى -->
-      <button onclick="openModal('modal-support-ticket')" class="bg-indigo-900/40 hover:bg-indigo-800 text-indigo-200 border border-indigo-700/60 px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-sm">
-        💬 الاقتراحات والشكاوى
-      </button>
+        <!-- 3. الاقتراحات والشكاوى -->
+        <button onclick="openModal('modal-support-ticket')" class="bg-indigo-900/40 hover:bg-indigo-800 text-indigo-200 border border-indigo-700/60 px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-sm">
+          💬 الاقتراحات والشكاوى
+        </button>
 
-      <!-- 4. سلة المشتريات -->
-      <button onclick="openModal('modal-cart')" class="relative bg-orange-600 hover:bg-orange-500 text-white px-4 py-2 rounded-xl text-xs font-black transition flex items-center gap-2 shadow-md">
-        <span>🛒 سلة المشتريات</span>
-        <span id="cart-counter" class="bg-white text-orange-700 font-black px-2 py-0.5 rounded-full text-[10px] font-mono">١</span>
-      </button>
+        <!-- 4. سلة المشتريات -->
+        <button onclick="openCartModal()" class="relative bg-orange-600 hover:bg-orange-500 text-white px-4 py-2 rounded-xl text-xs font-black transition flex items-center gap-2 shadow-md">
+          <span>🛒 سلة المشتريات</span>
+          <span id="cart-counter" class="bg-white text-orange-700 font-black px-2 py-0.5 rounded-full text-[10px] font-mono">١</span>
+        </button>
+      </div>
 
-      <!-- زر الحسابات البنكية للشركة -->
-      <button onclick="openModal('modal-company-settings')" class="bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 p-2 rounded-xl text-xs transition" title="إعدادات الحسابات البنكية الرسمية">
-        ⚙️
-      </button>
+      <!-- عناصر الهيدر الخاصة بالمدير العام فقط -->
+      <div id="header-admin-nav" class="hidden flex items-center gap-2">
+        <span class="text-xs bg-red-950 text-red-300 px-3 py-1.5 rounded-xl font-black border border-red-800 flex items-center gap-1">
+          👑 المدير العام (SuperAdmin)
+        </span>
+        <!-- زر إعدادات الدفع والحسابات البنكية للمدير العام فقط -->
+        <button onclick="openModal('modal-company-settings')" class="bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5" title="إعدادات الحسابات البنكية وإنستاباي">
+          ⚙️ إعدادات الدفع
+        </button>
+        <button onclick="logoutAdmin()" class="bg-slate-800 hover:bg-red-900 text-slate-300 hover:text-white px-3 py-1.5 rounded-xl text-xs font-bold transition">
+          تسجيل خروج
+        </button>
+      </div>
+
+      <!-- عناصر الهيدر الخاصة بالمندوب فقط -->
+      <div id="header-driver-nav" class="hidden flex items-center gap-2">
+        <span class="text-xs bg-blue-950 text-blue-300 px-3 py-1.5 rounded-xl font-black border border-blue-800 flex items-center gap-1">
+          🛵 كابتن: أحمد محمود (01012345678)
+        </span>
+        <button onclick="logoutDriver()" class="bg-slate-800 hover:bg-red-900 text-slate-300 hover:text-white px-3 py-1.5 rounded-xl text-xs font-bold transition">
+          تسجيل خروج
+        </button>
+      </div>
+
     </div>
   </header>
+
 
   <!-- ==================== 1. الواجهة الافتراضية: متجر العملاء الاحترافي المتكامل (Storefront) ==================== -->
   <main id="view-storefront" class="flex-1 overflow-y-auto bg-slate-100 text-slate-800 custom-scroll">
@@ -258,8 +286,8 @@
   <main id="view-driver" class="flex-1 overflow-y-auto p-6 bg-slate-950 hidden custom-scroll">
     <div class="max-w-xl mx-auto space-y-5">
       
-      <!-- هيدر المندوب مع شارة التقييم وزر الطوارئ -->
-      <div class="bg-gradient-to-r from-blue-700 to-indigo-800 text-white p-5 rounded-3xl shadow-xl flex items-center justify-between">
+      <!-- هيدر المندوب مع شارة التقييم وزر الطوارئ لشركة انطلاقه -->
+      <div class="bg-gradient-to-r from-orange-600 to-indigo-800 text-white p-5 rounded-3xl shadow-xl flex items-center justify-between">
         <div class="flex items-center gap-3.5">
           <div class="w-12 h-12 rounded-2xl bg-white/20 flex items-center justify-center font-black text-lg shadow-inner">أم</div>
           <div>
@@ -267,14 +295,14 @@
               <h3 class="text-base font-black">كابتن: أحمد محمود</h3>
               <span class="px-2 py-0.5 bg-emerald-500 text-white font-bold text-[10px] rounded-full">نشط 🟢</span>
             </div>
-            <p class="text-xs text-blue-200">فرع القاهرة المركزي (قطاع المعادي وطرة) | ⭐ 4.9</p>
+            <p class="text-xs text-orange-100">شركة انطلاقه (فرع القاهرة - قطاع المعادي) | ⭐ 4.9</p>
           </div>
         </div>
         <div class="flex items-center gap-2">
           <button onclick="openModal('modal-driver-sos')" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1.5 rounded-xl text-xs font-black shadow flex items-center gap-1">
-            🚨 بلاغ مشكلة
+            🚨 طوارئ
           </button>
-          <button onclick="setRole('storefront')" class="bg-white/10 hover:bg-white/20 text-white px-3 py-1.5 rounded-xl text-xs font-bold">
+          <button onclick="logoutDriver()" class="bg-white/10 hover:bg-white/20 text-white px-3 py-1.5 rounded-xl text-xs font-bold">
             خروج
           </button>
         </div>
@@ -287,7 +315,7 @@
           <span class="text-[11px] font-bold text-slate-400">العهدة الكاش بحوزتك:</span>
           <p class="text-lg font-black font-mono text-amber-500">١٤,٥٠٠ <span class="text-[10px] font-sans">ج.م</span></p>
           <button onclick="openDriverPayoutModal('١٤,٥٠٠.٠٠')" class="w-full bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 font-bold text-[10px] py-1 rounded-lg border border-amber-500/30 mt-1">
-            🏦 توريد للشركة
+            🏦 توريد كاش
           </button>
         </div>
 
@@ -298,7 +326,7 @@
           <span class="text-[10px] text-emerald-500 font-bold">↑ جاهزة للصرف</span>
         </div>
 
-        <!-- 3. المبيعات وقيمة الشحنات -->
+        <!-- 3. الشحنات المسلمة -->
         <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl shadow space-y-1">
           <span class="text-[11px] font-bold text-slate-400">الشحنات المسلمة:</span>
           <p class="text-lg font-black font-mono text-blue-400">١٨ / ٢٠ <span class="text-[10px] font-sans">شحنة</span></p>
@@ -309,24 +337,34 @@
         <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl shadow space-y-1">
           <span class="text-[11px] font-bold text-slate-400">معدل الإنجاز:</span>
           <p class="text-lg font-black font-mono text-purple-400">٩٦.٤٪</p>
-          <span class="text-[10px] text-slate-400">١ مؤجل بتاريخ محدد</span>
+          <span class="text-[10px] text-slate-400">١ مؤجل بتاريخ</span>
         </div>
       </div>
 
-      <!-- شريط تارجت البونص اليومي -->
-      <div class="bg-gradient-to-r from-orange-600 to-amber-600 text-white p-3.5 rounded-2xl shadow flex items-center justify-between text-xs">
-        <div class="flex items-center gap-2">
-          <span class="text-xl">🎯</span>
-          <div>
-            <p class="font-black">تارجت البونص اليومي: أكملت ٩٠٪ من هدفك!</p>
-            <p class="text-[11px] text-orange-100">سلم أوردرين إضافيين واحصل على بونص فوري <b>+٢٠٠ ج.م</b> اليوم.</p>
+      <!-- أزرار التبديل الداخلية بين أقسام المندوب: خط السير | العهدة العينية والمنتجات | الحسابات -->
+      <div class="bg-slate-900 p-1.5 rounded-2xl border border-slate-800 grid grid-cols-2 gap-1 text-xs">
+        <button onclick="switchDriverSubTab('routes')" id="driver-subtab-btn-routes" class="driver-sub-btn py-2 rounded-xl font-black bg-orange-600 text-white shadow transition flex items-center justify-center gap-1.5">
+          <span>🚚</span><span>خط السير والطلبات واللوكيشن</span>
+        </button>
+        <button onclick="switchDriverSubTab('stock')" id="driver-subtab-btn-stock" class="driver-sub-btn py-2 rounded-xl font-bold text-slate-400 hover:text-white transition flex items-center justify-center gap-1.5">
+          <span>📦</span><span>العهدة العينية والمنتجات بالصور</span>
+        </button>
+      </div>
+
+      <!-- ==================== تبويب 1: خط السير والطلبات واللوكيشن (Orders & Navigation) ==================== -->
+      <div id="driver-tab-view-routes" class="space-y-4">
+        <!-- شريط تارجت البونص اليومي -->
+        <div class="bg-gradient-to-r from-orange-600 to-amber-600 text-white p-3.5 rounded-2xl shadow flex items-center justify-between text-xs">
+          <div class="flex items-center gap-2">
+            <span class="text-xl">🎯</span>
+            <div>
+              <p class="font-black">تارجت البونص اليومي: أكملت ٩٠٪ من هدفك!</p>
+              <p class="text-[11px] text-orange-100">سلم أوردرين إضافيين واحصل على بونص فوري <b>+٢٠٠ ج.م</b> اليوم.</p>
+            </div>
           </div>
         </div>
-      </div>
 
-      <!-- ==================== شحنات خط السير الحالي ==================== -->
-      <div class="space-y-3">
-        <div class="flex justify-between items-center text-white">
+        <div class="flex justify-between items-center text-white pt-1">
           <h4 class="font-black text-sm">شحنات خط السير الحالي (Run-Sheet):</h4>
           <span class="text-xs text-slate-400 font-mono">المحطة ١ من ٤</span>
         </div>
@@ -339,14 +377,20 @@
           </div>
 
           <div class="flex justify-between items-start">
-            <div>
+            <div class="space-y-1">
               <h5 class="font-black text-base text-slate-900">سارة إبراهيم</h5>
               <p class="text-xs font-mono text-slate-500 font-bold">01098765432</p>
-              <p class="text-xs text-slate-600 mt-1">📍 ١٥ ميدان التحرير، عمارة ٤، الدور ٣، وسط البلد</p>
+              <p class="text-xs text-slate-700 font-medium">📍 ١٥ ميدان التحرير، عمارة ٤، الدور ٣، وسط البلد، القاهرة</p>
+              <p class="text-[11px] text-slate-500">الصنف: سماعات بلوتوث ANC Pro (قطعة واحدة)</p>
             </div>
-            <div class="flex gap-1.5">
-              <button onclick="alert('فتح خرائط جوجل للملاحة اللحظية')" class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold" title="خرائط">🗺️</button>
-              <button onclick="alert('اتصال هاتفي بالعميل: 01098765432')" class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold" title="اتصال">📞</button>
+            <!-- زري اللوكيشن والاتصال المباشر -->
+            <div class="flex flex-col gap-1.5 shrink-0">
+              <button onclick="openCustomerLocation('١٥ ميدان التحرير، وسط البلد، القاهرة', '30.0444,31.2357')" class="px-3 py-2 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 flex items-center gap-1.5 font-bold text-xs shadow-sm transition" title="فتح موقع العميل على خرائط جوجل">
+                <span>📍</span><span>اللوكيشن</span>
+              </button>
+              <button onclick="callCustomerPhone('01098765432', 'سارة إبراهيم')" class="px-3 py-2 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 flex items-center gap-1.5 font-bold text-xs shadow-sm transition" title="اتصال هاتفي مباشر">
+                <span>📞</span><span>اتصال</span>
+              </button>
             </div>
           </div>
 
@@ -362,7 +406,7 @@
               📷 تصوير إثبات تسليم
             </button>
             <button onclick="alert('✍️ تم تسجيل توقيع العميل الإلكتروني بنجاح!')" class="bg-slate-100 hover:bg-slate-200 text-slate-700 py-2.5 rounded-xl font-bold flex items-center justify-center gap-1">
-              ✍️ توقيع إلكتروني للعميل
+              ✍️ توقيع إلكتروني
             </button>
           </div>
 
@@ -377,20 +421,117 @@
           </button>
         </div>
 
-        <!-- شحنة 2: مسجلة كمؤجلة مع إظهار السبب والتاريخ والـ GPS -->
-        <div class="bg-slate-900 text-slate-200 p-5 rounded-3xl shadow border border-slate-800 space-y-3">
+        <!-- شحنة 2: مؤجلة مع بياناتها ولوكيشن -->
+        <div class="bg-white text-slate-800 p-5 rounded-3xl shadow-md border border-amber-200 space-y-3">
           <div class="flex justify-between items-center">
-            <span class="font-mono font-bold text-xs text-slate-400">#ORD-2026-10088</span>
-            <span class="px-2.5 py-1 bg-amber-500/20 text-amber-400 text-[10px] font-black rounded-full border border-amber-500/30">مؤجل بتاريخ محدد ⏱️</span>
+            <span class="font-mono font-bold text-xs text-blue-600 bg-blue-50 px-2.5 py-1 rounded-lg">#ORD-2026-10002</span>
+            <span class="px-2.5 py-1 bg-amber-100 text-amber-800 text-[10px] font-black rounded-full">مؤجل بتاريخ مجدول ⏱️</span>
           </div>
-          <div>
-            <h5 class="font-bold text-sm text-white">كريم عبد العزيز (01022334455)</h5>
-            <p class="text-xs text-slate-400 mt-0.5">📍 شارع مصدق، الدقي، الجيزة</p>
+          <div class="flex justify-between items-start">
+            <div class="space-y-0.5">
+              <h5 class="font-black text-base text-slate-900">محمد علي</h5>
+              <p class="text-xs font-mono text-slate-500 font-bold">01123456789</p>
+              <p class="text-xs text-slate-700">📍 شارع النصر، عمارة ١٢، المعادي الجديدة</p>
+            </div>
+            <div class="flex flex-col gap-1.5 shrink-0">
+              <button onclick="openCustomerLocation('شارع النصر، المعادي الجديدة، القاهرة', '29.9737,31.2785')" class="px-3 py-1.5 rounded-xl bg-blue-50 text-blue-700 border border-blue-200 flex items-center gap-1 font-bold text-xs">
+                <span>📍</span><span>اللوكيشن</span>
+              </button>
+              <button onclick="callCustomerPhone('01123456789', 'محمد علي')" class="px-3 py-1.5 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center gap-1 font-bold text-xs">
+                <span>📞</span><span>اتصال</span>
+              </button>
+            </div>
           </div>
-          <div class="bg-amber-950/40 p-3 rounded-2xl border border-amber-800/40 text-xs space-y-1">
-            <p class="font-bold text-amber-300">السبب الإلزامي: طلب العميل موعداً لاحقاً</p>
-            <p class="text-[11px] text-amber-200">الموعد الجديد المجدول: <b>غداً ٣٠ أغسطس - الساعة ٠٥:٠٠ م</b></p>
-            <p class="text-[10px] text-slate-400 font-mono">الموقع: 30.0444° N, 31.2357° E (GPS Verified ✓)</p>
+          <div class="p-3 bg-amber-50 rounded-2xl border border-amber-200 text-xs text-amber-900 font-bold space-y-1">
+            <p>السبب: طلب العميل تأجيل الموعد لعدم تواجده بالعنوان</p>
+            <p class="font-mono text-[11px] text-amber-800">الموعد القادم: 2026-08-31 (الفترة المسائية 4م - 8م)</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== تبويب 2: العهدة العينية والمنتجات بالصور والأسعار (Driver Visual Stock) ==================== -->
+      <div id="driver-tab-view-stock" class="space-y-4 hidden">
+        <div class="bg-gradient-to-br from-slate-900 to-indigo-950 border border-slate-800 p-5 rounded-3xl shadow-xl text-white space-y-2">
+          <div class="flex justify-between items-center">
+            <span class="text-xs font-bold text-orange-400 uppercase">العهدة العينية بالمركبة / الحقيبة</span>
+            <span class="text-xs bg-emerald-500 text-white px-2.5 py-0.5 rounded-full font-black">٢١ صنفاً مستلماً</span>
+          </div>
+          <div class="flex justify-between items-baseline pt-1">
+            <div>
+              <p class="text-[11px] text-slate-400">إجمالي القيمة المالية للعهدة العينية المستلمة:</p>
+              <p class="text-2xl font-black font-mono text-white">٣٢,٧٥٠.٠٠ <span class="text-xs font-sans text-orange-400">ج.م</span></p>
+            </div>
+            <button onclick="alert('جاري طباعة ومطابقة مانيفست العهدة العينية المستلمة من المخزن...')" class="bg-white/10 hover:bg-white/20 px-3 py-2 rounded-xl text-xs font-bold border border-white/20 flex items-center gap-1">
+              <span>📄</span><span>مطابقة العهدة</span>
+            </button>
+          </div>
+        </div>
+
+        <h4 class="font-black text-sm text-white pt-1">قائمة الأصناف المستلمة تفصيلياً بالصور والأسعار:</h4>
+
+        <div class="space-y-3">
+          <!-- صنف 1 -->
+          <div class="bg-white text-slate-800 p-4 rounded-3xl border border-slate-200 shadow-sm flex items-center justify-between gap-3">
+            <div class="flex items-center gap-3">
+              <div class="w-16 h-16 rounded-2xl bg-slate-100 flex items-center justify-center text-3xl shadow-inner shrink-0">🎧</div>
+              <div>
+                <span class="text-[10px] font-mono font-bold text-slate-400">ELEC-WRLS-001</span>
+                <h5 class="font-black text-sm text-slate-900">سماعات بلوتوث ANC Pro اللاسلكية</h5>
+                <p class="text-xs text-slate-500">سعر الاستلام والتحصيل: <b class="font-mono text-slate-900">١,٤٥٠.٠٠ ج.م</b></p>
+              </div>
+            </div>
+            <div class="text-left shrink-0">
+              <span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-xl font-mono font-black text-xs block">٨ قطع</span>
+              <span class="text-[10px] font-mono text-slate-500 font-bold mt-1 block">١١,٦٠٠ ج.م</span>
+            </div>
+          </div>
+
+          <!-- صنف 2 -->
+          <div class="bg-white text-slate-800 p-4 rounded-3xl border border-slate-200 shadow-sm flex items-center justify-between gap-3">
+            <div class="flex items-center gap-3">
+              <div class="w-16 h-16 rounded-2xl bg-slate-100 flex items-center justify-center text-3xl shadow-inner shrink-0">⌚</div>
+              <div>
+                <span class="text-[10px] font-mono font-bold text-slate-400">ELEC-SMWT-002</span>
+                <h5 class="font-black text-sm text-slate-900">ساعة رياضية ذكية أموليد GPS</h5>
+                <p class="text-xs text-slate-500">سعر الاستلام والتحصيل: <b class="font-mono text-slate-900">٢,٨٥٠.٠٠ ج.م</b></p>
+              </div>
+            </div>
+            <div class="text-left shrink-0">
+              <span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-xl font-mono font-black text-xs block">٤ قطع</span>
+              <span class="text-[10px] font-mono text-slate-500 font-bold mt-1 block">١١,٤٠٠ ج.م</span>
+            </div>
+          </div>
+
+          <!-- صنف 3 -->
+          <div class="bg-white text-slate-800 p-4 rounded-3xl border border-slate-200 shadow-sm flex items-center justify-between gap-3">
+            <div class="flex items-center gap-3">
+              <div class="w-16 h-16 rounded-2xl bg-slate-100 flex items-center justify-center text-3xl shadow-inner shrink-0">🔋</div>
+              <div>
+                <span class="text-[10px] font-mono font-bold text-slate-400">ELEC-CHRG-003</span>
+                <h5 class="font-black text-sm text-slate-900">باور بنك سريع 20000mAh PD 65W</h5>
+                <p class="text-xs text-slate-500">سعر الاستلام والتحصيل: <b class="font-mono text-slate-900">١,١٥٠.٠٠ ج.م</b></p>
+              </div>
+            </div>
+            <div class="text-left shrink-0">
+              <span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-xl font-mono font-black text-xs block">٦ قطع</span>
+              <span class="text-[10px] font-mono text-slate-500 font-bold mt-1 block">٦,٩٠٠ ج.م</span>
+            </div>
+          </div>
+
+          <!-- صنف 4 -->
+          <div class="bg-white text-slate-800 p-4 rounded-3xl border border-slate-200 shadow-sm flex items-center justify-between gap-3">
+            <div class="flex items-center gap-3">
+              <div class="w-16 h-16 rounded-2xl bg-slate-100 flex items-center justify-center text-3xl shadow-inner shrink-0">🎮</div>
+              <div>
+                <span class="text-[10px] font-mono font-bold text-slate-400">ELEC-GAME-004</span>
+                <h5 class="font-black text-sm text-slate-900">ذراع تحكم لاسلكي للألعاب برو</h5>
+                <p class="text-xs text-slate-500">سعر الاستلام والتحصيل: <b class="font-mono text-slate-900">٩٥٠.٠٠ ج.م</b></p>
+              </div>
+            </div>
+            <div class="text-left shrink-0">
+              <span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-xl font-mono font-black text-xs block">٣ قطع</span>
+              <span class="text-[10px] font-mono text-slate-500 font-bold mt-1 block">٢,٨٥٠ ج.م</span>
+            </div>
           </div>
         </div>
       </div>
@@ -752,9 +893,19 @@
 
         <!-- 3. بوالص التوزيع -->
         <div id="subtab-view-dispatch" class="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm space-y-4 hidden">
-          <div class="flex justify-between items-center">
-            <h3 class="font-black text-base text-slate-900">بوالص التوزيع وإسناد الشحنات لخطوط السير</h3>
-            <button onclick="alert('🖨️ جاري طباعة بوالص الشحن الحرارية')" class="bg-orange-600 text-white text-xs font-black px-4 py-2 rounded-xl shadow">🖨️ طباعة بوالص الباركود الحرارية</button>
+          <div class="flex flex-wrap justify-between items-center gap-3">
+            <div>
+              <h3 class="font-black text-base text-slate-900">بوالص التوزيع وإسناد الشحنات لخطوط السير (Courier Dispatch Hub)</h3>
+              <p class="text-xs text-slate-500">إصدار أذونات التوزيع الرسمية، إسناد البوالص للمناديب يدوياً أو بمسح الباركود وطباعة المانيفست</p>
+            </div>
+            <div class="flex items-center gap-2">
+              <button onclick="openCourierDispatchModal()" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-black px-4 py-2.5 rounded-xl shadow flex items-center gap-1.5 transition">
+                <span>📦</span><span>+ إصدار إذن توزيع للمندوب (يدوي / بالباركود)</span>
+              </button>
+              <button onclick="alert('🖨️ جاري طباعة بوالص الشحن الحرارية للمناديب المعتمدين...')" class="bg-orange-600 hover:bg-orange-700 text-white text-xs font-black px-3.5 py-2.5 rounded-xl shadow flex items-center gap-1.5 transition">
+                <span>🖨️</span><span>طباعة بوالص الباركود</span>
+              </button>
+            </div>
           </div>
           <table class="w-full text-right text-xs">
             <thead class="bg-slate-100 border-b border-slate-200 text-slate-700 font-black">
@@ -1725,289 +1876,556 @@
 
   <!-- ==================== كافة النوافذ المنبثقة التفاعلية (Modals) ==================== -->
 
-  <!-- 1. نافذة تتبع الشحنات -->
-  <div id="modal-track-shipment" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 hidden">
-    <div class="bg-white text-slate-800 rounded-3xl max-w-md w-full p-6 shadow-2xl space-y-4">
-      <div class="flex justify-between items-center border-b border-slate-100 pb-3">
-        <h3 class="font-black text-base text-slate-900">🔍 تتبع الشحنة برقم البوليصة</h3>
-        <button onclick="closeModal('modal-track-shipment')" class="text-slate-400 text-lg font-bold">✕</button>
-      </div>
-      <div class="space-y-3 text-xs">
-        <label class="font-bold text-slate-700">أدخل رقم البوليصة:</label>
-        <input type="text" id="track-input-val" value="ORD-2026-10001" class="w-full border border-slate-200 p-2.5 rounded-xl font-mono font-bold" />
-      </div>
-      <button onclick="alert('🔍 الشحنة ORD-2026-10001:\n• الحالة: مع المندوب أحمد محمود على خط سير المعادي\n• العنوان: ١٥ ميدان التحرير، القاهرة\n• المبلغ المطلوب كاش: ١,٥٠٠ ج.م'); closeModal('modal-track-shipment');" class="w-full bg-blue-600 text-white py-2.5 rounded-xl text-xs font-black shadow-md">
-        تتبع مسار الشحنة الآن
-      </button>
-    </div>
-  </div>
-
-  <!-- 2. نافذة الاقتراحات والشكاوى -->
-  <div id="modal-support-ticket" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 hidden">
-    <div class="bg-white text-slate-800 rounded-3xl max-w-md w-full p-6 shadow-2xl space-y-4">
-      <div class="flex justify-between items-center border-b border-slate-100 pb-3">
-        <h3 class="font-black text-base text-slate-900">💬 الاقتراحات والشكاوى</h3>
-        <button onclick="closeModal('modal-support-ticket')" class="text-slate-400 text-lg font-bold">✕</button>
-      </div>
-      <div class="space-y-3 text-xs">
-        <input type="text" placeholder="اسمك ورقم الهاتف للتواصل" class="w-full border p-2.5 rounded-xl font-bold" />
-        <textarea rows="3" placeholder="تفاصيل الشكوى أو الاقتراح لتطوير الخدمة..." class="w-full border p-2.5 rounded-xl"></textarea>
-      </div>
-      <button onclick="alert('🎉 تم استلام تذكرتك بنجاح برقم TKT-2026-9901 وسيتم الرد خلال ساعتين!'); closeModal('modal-support-ticket');" class="w-full bg-indigo-600 text-white py-2.5 rounded-xl text-xs font-black shadow-md">
-        إرسال التذكرة
-      </button>
-    </div>
-  </div>
-
-  <!-- 3. نافذة سلة المشتريات -->
-  <div id="modal-cart" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 hidden">
-    <div class="bg-white text-slate-800 rounded-3xl max-w-md w-full p-6 shadow-2xl space-y-4">
-      <div class="flex justify-between items-center border-b border-slate-100 pb-3">
-        <h3 class="font-black text-base text-slate-900">🛒 سلة المشتريات</h3>
-        <button onclick="closeModal('modal-cart')" class="text-slate-400 text-lg font-bold">✕</button>
-      </div>
-      <div class="p-3 bg-slate-50 rounded-2xl border border-slate-200 text-xs flex justify-between items-center">
-        <span>سماعات بلوتوث ANC Pro</span>
-        <b class="font-mono text-blue-600">١,٤٥٠.٠٠ ج.م</b>
-      </div>
-      <button onclick="alert('🎉 تم تأكيد طلب الشراء بنجاح برقم بوليصة #ORD-2026-10099 والدفع عند الاستلام!'); closeModal('modal-cart');" class="w-full bg-orange-600 text-white py-2.5 rounded-xl text-xs font-black shadow-md">
-        تأكيد الطلب والدفع عند الاستلام
-      </button>
-    </div>
-  </div>
-
-  <!-- 4. نافذة تفاصيل المنتج ومعاينة فيديو 4K -->
-  <div id="modal-product-detail" class="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4 hidden">
-    <div class="bg-white text-slate-800 rounded-3xl max-w-xl w-full p-6 shadow-2xl space-y-4">
-      <div class="flex justify-between items-center border-b border-slate-100 pb-3">
-        <h3 class="font-black text-base text-slate-900" id="detail-prod-title">سماعات ANC Pro اللاسلكية</h3>
-        <button onclick="closeModal('modal-product-detail')" class="text-slate-400 text-lg font-bold">✕</button>
-      </div>
-      <!-- فيديو الشرح ومعرض الصور -->
-      <div class="h-48 bg-slate-950 rounded-2xl flex flex-col items-center justify-center text-white space-y-2 relative">
-        <span class="text-5xl" id="detail-prod-icon">🎧</span>
-        <button onclick="alert('▶ جاري تشغيل فيديو المعاينة والشرح بدقة 4K!')" class="bg-white/20 hover:bg-white/30 text-white text-xs px-3 py-1.5 rounded-xl font-bold flex items-center gap-1">
-          ▶ تشغيل فيديو المنتج 4K
-        </button>
-      </div>
-      <div class="space-y-2 text-xs">
-        <p class="font-bold text-slate-700">✓ عزل ضوضاء هجين وصوت نقي 40 ساعة تشغيل متواصل.</p>
-        <p class="font-bold text-slate-700">✓ شحن سريع ٢٤ ساعة لكافة محافظات مصر وضمان رسمي عامين.</p>
-      </div>
-      <button onclick="closeModal('modal-product-detail'); openDirectBuyModal(document.getElementById('detail-prod-title').innerText, 1450, 'ELEC-WRLS-001');" class="w-full bg-orange-600 text-white py-3 rounded-xl text-xs font-black shadow">
-        ⚡ شراء الآن فوراً
-      </button>
-    </div>
-  </div>
-
-  <!-- 5. نافذة تأجيل الأوردر بسبب إلزامي وتاريخ للمندوب -->
-  <div id="modal-postpone-advanced" class="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4 hidden">
-    <div class="bg-white text-slate-800 rounded-3xl max-w-lg w-full p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
+  <!-- 1. نافذة تسجيل دخول المدير العام (Admin Login Modal) -->
+  <div id="modal-login-admin" class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white text-slate-800 rounded-3xl max-w-md w-full p-6 shadow-2xl space-y-4 border border-slate-200">
       <div class="flex justify-between items-center border-b border-slate-100 pb-3">
         <div class="flex items-center gap-2">
-          <div class="w-8 h-8 rounded-xl bg-amber-500 text-white flex items-center justify-center font-bold">⏱️</div>
+          <div class="w-9 h-9 rounded-xl bg-orange-600 text-white flex items-center justify-center font-black">👑</div>
           <div>
-            <h3 class="font-black text-base text-slate-900">تأجيل موعد تسليم الشحنة</h3>
-            <p class="text-[11px] text-slate-400" id="postpone-order-title">بوليصة #ORD-2026-10001</p>
+            <h3 class="font-black text-base text-slate-900">تسجيل دخول المدير العام</h3>
+            <p class="text-[11px] text-slate-400">لوحة التحكم المركزية - شركة انطلاقه للشحن</p>
           </div>
         </div>
-        <button onclick="closeModal('modal-postpone-advanced')" class="text-slate-400 text-lg font-bold">✕</button>
+        <button onclick="closeModal('modal-login-admin')" class="text-slate-400 text-lg font-bold">✕</button>
       </div>
 
-      <div class="space-y-3.5 text-xs">
+      <div class="p-3 bg-amber-50 rounded-2xl border border-amber-200 text-xs text-amber-900 leading-relaxed font-bold">
+        <span>ℹ️ ملاحظة الصلاحيات: المدير المعتمد مسجل بالهاتف </span>
+        <span class="font-mono text-blue-700 font-black">01092519210</span>
+        <span> ويمتلك كافة الصلاحيات للتحكم وإضافة مدراء آخرين وتعديل إعدادات الدفع.</span>
+      </div>
+
+      <form onsubmit="event.preventDefault(); submitAdminLogin();" class="space-y-3.5 text-xs">
         <div>
-          <label class="font-black text-slate-700 block mb-1">سبب التأجيل الإلزامي:</label>
-          <select id="adv-postpone-reason" class="w-full border border-slate-200 p-2.5 rounded-xl font-bold bg-slate-50">
-            <option value="CUSTOMER_REQUESTED_RESCHEDULE">طلب العميل موعداً لاحقاً (تحديد تاريخ وساعة)</option>
-            <option value="CUSTOMER_NO_ANSWER">العميل لم يرد على الهاتف (تم الاتصال ٣ مرات)</option>
-            <option value="CASH_NOT_AVAILABLE">المبلغ الكاش غير متوفر مع العميل حالياً</option>
-            <option value="INCORRECT_ADDRESS">العنوان غير دقيق وجاري مراجعته</option>
-          </select>
+          <label class="font-black text-slate-700 block mb-1">البريد الإلكتروني أو رقم الهاتف المعتمد:</label>
+          <input type="text" id="admin-login-id" value="01092519210" placeholder="01092519210 أو admin@entelaqa.eg" class="w-full border border-slate-200 p-3 rounded-xl font-bold font-mono text-slate-900 bg-slate-50 focus:bg-white focus:border-orange-500 outline-none" required />
         </div>
-        <div class="grid grid-cols-2 gap-3">
+        <div>
+          <label class="font-black text-slate-700 block mb-1">كلمة المرور:</label>
+          <input type="password" id="admin-login-pass" value="••••••••" placeholder="كلمة المرور السرية" class="w-full border border-slate-200 p-3 rounded-xl font-bold font-mono text-slate-900 bg-slate-50 focus:bg-white focus:border-orange-500 outline-none" required />
+        </div>
+        <button type="submit" class="w-full bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-500 hover:to-amber-500 text-white py-3 rounded-xl text-xs font-black shadow-lg transition">
+          👑 الدخول للوحة المدير العام (SuperAdmin)
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- 2. نافذة تسجيل دخول المندوب (Driver Login Modal) -->
+  <div id="modal-login-driver" class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white text-slate-800 rounded-3xl max-w-md w-full p-6 shadow-2xl space-y-4 border border-slate-200">
+      <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+        <div class="flex items-center gap-2">
+          <div class="w-9 h-9 rounded-xl bg-blue-600 text-white flex items-center justify-center font-black">🛵</div>
           <div>
-            <label class="font-black text-slate-700 block mb-1">تاريخ التسليم القادم:</label>
-            <input type="date" id="adv-postpone-date" value="2026-08-30" class="w-full border border-slate-200 p-2.5 rounded-xl font-bold font-mono" />
+            <h3 class="font-black text-base text-slate-900">تسجيل دخول المندوب</h3>
+            <p class="text-[11px] text-slate-400">تطبيق المناديب الميداني - شركة انطلاقه</p>
+          </div>
+        </div>
+        <button onclick="closeModal('modal-login-driver')" class="text-slate-400 text-lg font-bold">✕</button>
+      </div>
+
+      <div class="p-3 bg-blue-50 rounded-2xl border border-blue-200 text-xs text-blue-900 leading-relaxed font-bold">
+        <span>ℹ️ تنبيه: حسابات المناديب يتم إنشاؤها وتفعيلها حصراً من خلال إدارة الشركة، ويكون الدخول برقم الهاتف وكلمة المرور المسجلة.</span>
+      </div>
+
+      <form onsubmit="event.preventDefault(); submitDriverLogin();" class="space-y-3.5 text-xs">
+        <div>
+          <label class="font-black text-slate-700 block mb-1">رقم هاتف المندوب المسجل:</label>
+          <input type="text" id="driver-login-phone" value="01012345678" placeholder="010xxxxxxxx" class="w-full border border-slate-200 p-3 rounded-xl font-bold font-mono text-slate-900 bg-slate-50 focus:bg-white focus:border-blue-500 outline-none" required />
+        </div>
+        <div>
+          <label class="font-black text-slate-700 block mb-1">كلمة المرور:</label>
+          <input type="password" id="driver-login-pass" value="••••••••" placeholder="كلمة المرور" class="w-full border border-slate-200 p-3 rounded-xl font-bold font-mono text-slate-900 bg-slate-50 focus:bg-white focus:border-blue-500 outline-none" required />
+        </div>
+        <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 text-white py-3 rounded-xl text-xs font-black shadow-lg transition">
+          🛵 الدخول لتطبيق المندوب وبدء خط السير
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- 3. نافذة إتمام الطلب والشراء وبوابة الدفع الحقيقية (Checkout & Payment Gateway Modal) -->
+  <div id="modal-checkout-gateway" class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white text-slate-800 rounded-3xl max-w-xl w-full p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto custom-scroll border border-slate-200">
+      <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+        <div class="flex items-center gap-2">
+          <div class="w-9 h-9 rounded-xl bg-orange-600 text-white flex items-center justify-center font-black">🛍️</div>
+          <div>
+            <h3 class="font-black text-base text-slate-900">إتمام الشراء وبوابة الدفع الفوري</h3>
+            <p class="text-[11px] text-slate-400">شركة انطلاقه للشحن والتوصيل السريع 🇪🇬</p>
+          </div>
+        </div>
+        <button onclick="closeModal('modal-checkout-gateway')" class="text-slate-400 text-lg font-bold">✕</button>
+      </div>
+
+      <!-- ملخص الصنف المطلوب -->
+      <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-200 flex justify-between items-center text-xs">
+        <div>
+          <span class="text-slate-500 font-bold">المنتج المحدد:</span>
+          <h4 class="font-black text-slate-900" id="checkout-summary-name">سماعات بلوتوث ANC Pro</h4>
+          <span class="text-[10px] font-mono text-slate-400" id="checkout-summary-sku">ELEC-WRLS-001</span>
+        </div>
+        <div class="text-left">
+          <span class="text-slate-500 text-[10px] block">سعر القطعة:</span>
+          <b class="font-mono font-black text-sm text-blue-600" id="checkout-summary-price">١,٤٥٠.٠٠ ج.م</b>
+        </div>
+      </div>
+
+      <form onsubmit="event.preventDefault(); submitCheckoutOrder();" class="space-y-3.5 text-xs">
+        <!-- بيانات العميل -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="font-black text-slate-700 block mb-1">اسم المستلم بالكامل:</label>
+            <input type="text" id="checkout-cust-name" value="أحمد محمد السيد" placeholder="الاسم ثلاثي" class="w-full border border-slate-200 p-2.5 rounded-xl font-bold" required />
           </div>
           <div>
-            <label class="font-black text-slate-700 block mb-1">الوقت المفضل:</label>
-            <select id="adv-postpone-time" class="w-full border border-slate-200 p-2.5 rounded-xl font-bold">
-              <option>الفترة الصباحية (١٠ص - ٢ظ)</option>
-              <option selected>الفترة المسائية (٤م - ٨م)</option>
+            <label class="font-black text-slate-700 block mb-1">رقم الهاتف (للتواصل والتوصيل):</label>
+            <input type="tel" id="checkout-cust-phone" value="01098765432" placeholder="010xxxxxxxx" class="w-full border border-slate-200 p-2.5 rounded-xl font-bold font-mono text-blue-700" required />
+          </div>
+        </div>
+
+        <!-- المحافظة والعنوان -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div>
+            <label class="font-black text-slate-700 block mb-1">المحافظة / قطاع الشحن:</label>
+            <select id="checkout-cust-gov" onchange="recalcCheckoutShipping()" class="w-full border border-slate-200 p-2.5 rounded-xl font-bold bg-slate-50">
+              <option value="40" selected>القاهرة (شحن ٤٠ ج.م - خلال ٢٤ ساعة)</option>
+              <option value="40">الجيزة (شحن ٤٠ ج.م - خلال ٢٤ ساعة)</option>
+              <option value="55">الإسكندرية والساحل (شحن ٥٥ ج.م)</option>
+              <option value="60">الدقهلية / المنصورة (شحن ٦٠ ج.م)</option>
+              <option value="60">الشرقية والقليوبية (شحن ٦٠ ج.م)</option>
+              <option value="85">محافظات الصعيد (شحن ٨٥ ج.م)</option>
             </select>
           </div>
+          <div class="sm:col-span-2">
+            <label class="font-black text-slate-700 block mb-1">العنوان التفصيلي (الشارع، رقم العمارة والشقة):</label>
+            <input type="text" id="checkout-cust-address" value="١٥ شارع التحرير، عمارة ٤، الدور الثالث، شقة ٦" placeholder="اسم الشارع ورقم العمارة والمميز" class="w-full border border-slate-200 p-2.5 rounded-xl font-bold" required />
+          </div>
         </div>
-        <div class="p-3 bg-slate-50 rounded-2xl border border-slate-200 flex justify-between items-center text-[11px] text-slate-600">
-          <span>📍 إحداثيات الموقع:</span>
-          <b class="font-mono text-slate-900">30.0444° N, 31.2357° E (GPS Verified ✓)</b>
+
+        <div>
+          <label class="font-black text-slate-700 block mb-1">ملاحظات للمندوب أو علامة مميزة (اختياري):</label>
+          <input type="text" id="checkout-cust-notes" value="بجوار البنك الأهلي المصري - الاتصال قبل الوصول بـ ١٥ دقيقة" class="w-full border border-slate-200 p-2 rounded-xl text-[11px]" />
+        </div>
+
+        <!-- اختيار طريقة الدفع -->
+        <div class="space-y-2 pt-1 border-t border-slate-100">
+          <label class="font-black text-slate-800 block">اختر طريقة الدفع المفضلة:</label>
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center text-xs font-bold">
+            <!-- 1. كاش عند الاستلام -->
+            <label class="payment-method-label cursor-pointer p-3 rounded-2xl border-2 border-orange-600 bg-orange-50 text-orange-950 flex flex-col items-center gap-1.5 transition">
+              <input type="radio" name="pay_method" value="COD" checked onchange="selectPaymentMethod('COD')" class="hidden" />
+              <span class="text-xl">💵</span>
+              <span class="text-[11px] font-black">الدفع عند الاستلام كاش</span>
+            </label>
+
+            <!-- 2. إنستاباي InstaPay -->
+            <label class="payment-method-label cursor-pointer p-3 rounded-2xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-800 flex flex-col items-center gap-1.5 transition">
+              <input type="radio" name="pay_method" value="INSTAPAY" onchange="selectPaymentMethod('INSTAPAY')" class="hidden" />
+              <span class="text-xl">🟣</span>
+              <span class="text-[11px] font-black">إنستاباي InstaPay</span>
+            </label>
+
+            <!-- 3. فودافون كاش -->
+            <label class="payment-method-label cursor-pointer p-3 rounded-2xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-800 flex flex-col items-center gap-1.5 transition">
+              <input type="radio" name="pay_method" value="VODAFONE" onchange="selectPaymentMethod('VODAFONE')" class="hidden" />
+              <span class="text-xl">🔴</span>
+              <span class="text-[11px] font-black">فودافون كاش</span>
+            </label>
+
+            <!-- 4. بطاقة بنكية فيزا -->
+            <label class="payment-method-label cursor-pointer p-3 rounded-2xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-800 flex flex-col items-center gap-1.5 transition">
+              <input type="radio" name="pay_method" value="CARD" onchange="selectPaymentMethod('CARD')" class="hidden" />
+              <span class="text-xl">💳</span>
+              <span class="text-[11px] font-black">بطاقة بنكية / فيزا</span>
+            </label>
+          </div>
+
+          <!-- تفاصيل إنستاباي عند الاختيار -->
+          <div id="pay-details-instapay" class="p-3 bg-purple-50 rounded-2xl border border-purple-200 text-xs text-purple-900 space-y-1 hidden">
+            <p class="font-bold">عنوان إنستاباي الرسمي للشركة: <b class="font-mono text-purple-700 font-black">antigravity.logistics@instapay</b></p>
+            <p class="text-[11px] text-slate-500">قم بالتحويل عبر تطبيق إنستاباي وأدخل رقم المعاملة أدناه للمطابقة الفورية.</p>
+            <input type="text" placeholder="أدخل رقم العملية / مرجع التحويل في إنستاباي" class="w-full border border-purple-200 p-2 rounded-xl font-mono text-xs mt-1" />
+          </div>
+
+          <!-- تفاصيل فودافون كاش عند الاختيار -->
+          <div id="pay-details-vodafone" class="p-3 bg-red-50 rounded-2xl border border-red-200 text-xs text-red-900 space-y-1 hidden">
+            <p class="font-bold">رقم محفظة فودافون كاش الرسمية: <b class="font-mono text-red-700 font-black">01092519210</b></p>
+            <p class="text-[11px] text-slate-500">حول المبلغ للمحفظة واكتب رقم هاتفك المحول منه.</p>
+            <input type="text" placeholder="رقم هاتفك الذي قمت بالتحويل منه" class="w-full border border-red-200 p-2 rounded-xl font-mono text-xs mt-1" />
+          </div>
+        </div>
+
+        <!-- ملخص الحساب والإجمالي -->
+        <div class="bg-slate-900 text-white p-4 rounded-2xl space-y-2">
+          <div class="flex justify-between text-xs text-slate-300">
+            <span>قيمة المنتجات:</span>
+            <span class="font-mono font-bold" id="checkout-calc-subtotal">١,٤٥٠.٠٠ ج.م</span>
+          </div>
+          <div class="flex justify-between text-xs text-slate-300">
+            <span>تكلفة الشحن والتوصيل للعنوان:</span>
+            <span class="font-mono font-bold text-orange-400" id="checkout-calc-shipping">+٤٠.٠٠ ج.م</span>
+          </div>
+          <div class="flex justify-between text-sm font-black pt-2 border-t border-slate-800">
+            <span>الإجمالي النهائي المطلوب:</span>
+            <span class="font-mono text-emerald-400 text-base" id="checkout-calc-total">١,٤٩٠.٠٠ ج.م</span>
+          </div>
+        </div>
+
+        <!-- زر تأكيد الطلب وإصدار البوليصة -->
+        <button type="submit" class="w-full bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-500 hover:to-amber-500 text-white py-3.5 rounded-2xl text-xs font-black shadow-lg transition flex items-center justify-center gap-2">
+          <span>🚀 تأكيد الشراء وإصدار بوليصة الشحن الرسمية</span>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- 4. نافذة بوليصة الشحن والفاتورة الرسمية المعتمدة (Official Waybill Modal) -->
+  <div id="modal-waybill-invoice" class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white text-slate-800 rounded-3xl max-w-lg w-full p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto custom-scroll border-2 border-slate-900">
+      <div class="flex justify-between items-center border-b-2 border-slate-900 pb-3">
+        <div class="flex items-center gap-2">
+          <div class="w-9 h-9 rounded-xl bg-orange-600 text-white flex items-center justify-center font-black">📦</div>
+          <div>
+            <h3 class="font-black text-base text-slate-900">بوليصة شحن معتمدة (Waybill)</h3>
+            <p class="text-[11px] font-bold text-slate-600">شركة انطلاقه للشحن والتوصيل 🇪🇬</p>
+          </div>
+        </div>
+        <button onclick="closeModal('modal-waybill-invoice')" class="text-slate-400 text-lg font-bold">✕</button>
+      </div>
+
+      <!-- الباركود وبيانات البوليصة -->
+      <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 text-center space-y-2">
+        <span class="text-xs font-bold text-slate-500">رقم البوليصة الموحد (Tracking AWB):</span>
+        <p class="text-2xl font-black font-mono text-blue-600 tracking-wider" id="wb-ticket-num">ORD-2026-98124</p>
+        <!-- شريط الباركود التخيلي -->
+        <div class="font-mono text-xl tracking-[0.3em] font-black text-slate-800 select-none py-1 bg-white border rounded">
+          ||||| | |||| ||| ||||| || |||
+        </div>
+        <span class="text-[10px] text-emerald-700 bg-emerald-100 px-2.5 py-0.5 rounded-full font-bold">حالة الشحنة: تم تأكيد الطلب وجاري التجهيز للشحن ✓</span>
+      </div>
+
+      <!-- تفاصيل المستلم والوجهة -->
+      <div class="space-y-2 text-xs border border-slate-200 p-3.5 rounded-2xl">
+        <div class="flex justify-between">
+          <span class="text-slate-500 font-bold">اسم المستلم:</span>
+          <b class="text-slate-900" id="wb-ticket-name">أحمد محمد السيد</b>
+        </div>
+        <div class="flex justify-between">
+          <span class="text-slate-500 font-bold">رقم الهاتف:</span>
+          <b class="font-mono text-blue-700" id="wb-ticket-phone">01098765432</b>
+        </div>
+        <div class="flex justify-between">
+          <span class="text-slate-500 font-bold">عنوان التسليم:</span>
+          <b class="text-slate-800 text-left max-w-[240px]" id="wb-ticket-address">١٥ شارع التحرير، وسط البلد، القاهرة</b>
+        </div>
+        <div class="flex justify-between">
+          <span class="text-slate-500 font-bold">الصنف المطلوب:</span>
+          <b class="text-slate-900" id="wb-ticket-prod">سماعات بلوتوث ANC Pro (قطعة واحدة)</b>
+        </div>
+        <div class="flex justify-between">
+          <span class="text-slate-500 font-bold">طريقة الدفع:</span>
+          <b class="text-orange-700 font-bold" id="wb-ticket-method">الدفع عند الاستلام كاش</b>
+        </div>
+        <div class="flex justify-between pt-2 border-t border-slate-100 text-sm font-black">
+          <span>المبلغ الإجمالي المطلوب تحصيله:</span>
+          <span class="font-mono text-emerald-600 font-black" id="wb-ticket-total">١,٤٩٠.٠٠ ج.م</span>
         </div>
       </div>
 
-      <div class="flex justify-end gap-2 border-t border-slate-100 pt-3">
-        <button onclick="closeModal('modal-postpone-advanced')" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-500">إلغاء</button>
-        <button onclick="saveAdvancedPostponement()" class="bg-amber-600 hover:bg-amber-500 text-white px-5 py-2.5 rounded-xl text-xs font-black shadow-md">
-          ✓ اعتماد التأجيل وتحديث الإدارة
+      <!-- أزرار الطباعة والإغلاق -->
+      <div class="grid grid-cols-2 gap-3">
+        <button onclick="printWaybillTicket()" class="bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl text-xs font-black shadow flex items-center justify-center gap-1.5">
+          <span>🖨️</span><span>طباعة البوليصة الحرارية</span>
+        </button>
+        <button onclick="closeModal('modal-waybill-invoice'); setRole('storefront');" class="bg-slate-900 hover:bg-slate-800 text-white py-3 rounded-xl text-xs font-black shadow">
+          تم والعودة للمتجر
         </button>
       </div>
     </div>
   </div>
 
-  <!-- 6. نافذة طوارئ المندوب (Driver SOS) -->
-  <div id="modal-driver-sos" class="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4 hidden">
-    <div class="bg-white text-slate-800 rounded-3xl max-w-md w-full p-6 shadow-2xl space-y-4">
+  <!-- 5. نافذة إصدار إذن توزيع للمناديب (Courier Dispatch Manifest Modal) -->
+  <div id="modal-courier-dispatch-voucher" class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white text-slate-800 rounded-3xl max-w-xl w-full p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto custom-scroll border border-slate-200">
       <div class="flex justify-between items-center border-b border-slate-100 pb-3">
-        <h3 class="font-black text-base text-slate-900">🚨 مركز الدعم وبلاغات الطوارئ للمناديب</h3>
-        <button onclick="closeModal('modal-driver-sos')" class="text-slate-400 text-lg font-bold">✕</button>
-      </div>
-      <div class="space-y-3 text-xs">
-        <div class="grid grid-cols-2 gap-2">
-          <button onclick="alert('📞 جاري الاتصال بمشرف العمليات الميداني...')" class="bg-emerald-50 text-emerald-900 p-3 rounded-2xl border border-emerald-200 text-center font-bold">
-            📞 اتصال بمشرف الفرع
-          </button>
-          <button onclick="alert('💬 جاري فتح شات الدعم اللوجستي...')" class="bg-blue-50 text-blue-900 p-3 rounded-2xl border border-blue-200 text-center font-bold">
-            💬 شات الدعم المباشر
-          </button>
+        <div class="flex items-center gap-2">
+          <div class="w-9 h-9 rounded-xl bg-blue-600 text-white flex items-center justify-center font-black">🚚</div>
+          <div>
+            <h3 class="font-black text-base text-slate-900">إصدار إذن توزيع وبوالص للمندوب</h3>
+            <p class="text-[11px] text-slate-400">مركز المخازن وخطوط السير - شركة انطلاقه</p>
+          </div>
         </div>
-        <select class="w-full border p-2.5 rounded-xl font-bold">
-          <option>عميل يرفض الاستلام بعد فتح الطرد</option>
-          <option>عطل مفاجئ بالمركبة على خط السير</option>
-          <option>صعوبة الوصول للعنوان بسبب إغلاق طريق</option>
-        </select>
-        <textarea rows="2" class="w-full border p-2.5 rounded-xl" placeholder="تفاصيل الموقف..."></textarea>
+        <button onclick="closeModal('modal-courier-dispatch-voucher')" class="text-slate-400 text-lg font-bold">✕</button>
       </div>
-      <button onclick="alert('🚨 تم إرسال البلاغ لغرفة العمليات فوراً!'); closeModal('modal-driver-sos');" class="w-full bg-red-600 text-white py-2.5 rounded-xl text-xs font-black shadow">إرسال البلاغ</button>
-    </div>
-  </div>
 
-  <!-- 7. إعدادات حسابات الدفع للشركة -->
-  <div id="modal-company-settings" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 hidden">
-    <div class="bg-white text-slate-800 rounded-3xl max-w-lg w-full p-6 shadow-2xl space-y-4">
-      <div class="flex justify-between items-center border-b border-slate-100 pb-3">
-        <h3 class="font-black text-base text-slate-900">إعدادات الحسابات البنكية الرسمية</h3>
-        <button onclick="closeModal('modal-company-settings')" class="text-slate-400 text-lg font-bold">✕</button>
-      </div>
-      <div class="space-y-3 text-xs">
-        <input type="text" value="antigravity.logistics@instapay" class="w-full border p-2.5 rounded-xl font-mono font-bold text-blue-600" />
-        <input type="text" value="01012345678 (فودافون كاش)" class="w-full border p-2.5 rounded-xl font-mono font-bold" />
-        <input type="text" value="EG380010004589201900000000000 (CIB)" class="w-full border p-2.5 rounded-xl font-mono font-bold" />
-      </div>
-      <button onclick="alert('✅ تم حفظ بيانات الدفع بنجاح!'); closeModal('modal-company-settings');" class="w-full bg-blue-600 text-white py-2.5 rounded-xl text-xs font-black shadow-md">حفظ التعديلات</button>
-    </div>
-  </div>
-
-  <!-- 8. تسجيل مدير / مندوب (RBAC) -->
-  <div id="modal-create-user" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 hidden">
-    <div class="bg-white text-slate-800 rounded-3xl max-w-lg w-full p-6 shadow-2xl space-y-4">
-      <div class="flex justify-between items-center border-b border-slate-100 pb-3">
-        <h3 class="font-black text-base text-slate-900">تسجيل مدير / مندوب جديد (RBAC)</h3>
-        <button onclick="closeModal('modal-create-user')" class="text-slate-400 text-lg font-bold">✕</button>
-      </div>
-      <div class="space-y-3 text-xs">
-        <input type="text" placeholder="الاسم بالكامل" class="w-full border p-2.5 rounded-xl font-bold" />
-        <select class="w-full border p-2.5 rounded-xl font-bold">
-          <option>مدير فرع ومستودع</option>
-          <option>مسؤول مالي وخزينة</option>
-          <option>مندوب توصيل</option>
-        </select>
-        <input type="email" placeholder="البريد الإلكتروني" class="w-full border p-2.5 rounded-xl font-mono" />
-      </div>
-      <button onclick="alert('✅ تم تفعيل الحساب بنجاح!'); closeModal('modal-create-user');" class="w-full bg-blue-600 text-white py-2.5 rounded-xl text-xs font-black shadow-md">تفعيل الحساب</button>
-    </div>
-  </div>
-
-  <!-- 9. استيراد إكسيل -->
-  <div id="modal-excel-import" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 hidden">
-    <div class="bg-white text-slate-800 rounded-3xl max-w-lg w-full p-6 shadow-2xl space-y-4">
-      <div class="flex justify-between items-center border-b border-slate-100 pb-3">
-        <h3 class="font-black text-base text-slate-900">استيراد أوردرات من Excel (+100 أوردر)</h3>
-        <button onclick="closeModal('modal-excel-import')" class="text-slate-400 text-lg font-bold">✕</button>
-      </div>
-      <div class="p-6 border-2 border-dashed rounded-2xl text-center space-y-2 bg-slate-50">
-        <div class="text-3xl">📊</div>
-        <p class="text-xs font-bold text-slate-700">شحنات_القاهرة_142_اوردر.xlsx</p>
-      </div>
-      <button onclick="alert('🎉 تم استيراد ١٤٢ أوردر وتوليد البوالص بنجاح!'); closeModal('modal-excel-import');" class="w-full bg-emerald-600 text-white py-2.5 rounded-xl text-xs font-black shadow-md">استيراد البوالص</button>
-    </div>
-  </div>
-
-  <!-- 10. إضافة صنف جديد (في مركز الأصناف) -->
-  <div id="modal-add-product-simple" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 hidden">
-    <div class="bg-white text-slate-800 rounded-3xl max-w-lg w-full p-6 shadow-2xl space-y-4">
-      <div class="flex justify-between items-center border-b border-slate-100 pb-3">
-        <h3 class="font-black text-base text-slate-900">+ إضافة صنف جديد لدليل المخزن</h3>
-        <button onclick="closeModal('modal-add-product-simple')" class="text-slate-400 text-lg font-bold">✕</button>
-      </div>
-      <div class="space-y-3 text-xs">
-        <input type="text" placeholder="اسم الصنف" class="w-full border p-2.5 rounded-xl font-bold" />
-        <div class="grid grid-cols-2 gap-3">
-          <input type="number" placeholder="سعر البيع (ج.م)" class="border p-2.5 rounded-xl font-mono font-bold" />
-          <input type="number" placeholder="الكمية المتاحة" class="border p-2.5 rounded-xl font-mono font-bold" />
-        </div>
-      </div>
-      <button onclick="alert('✅ تم إدراج الصنف بالمخزن بنجاح!'); closeModal('modal-add-product-simple');" class="w-full bg-blue-600 text-white py-2.5 rounded-xl text-xs font-black shadow-md">حفظ الصنف</button>
-    </div>
-  </div>
-
-  <!-- 11. إنشاء كود خصم جديد -->
-  <div id="modal-create-coupon" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 hidden">
-    <div class="bg-white text-slate-800 rounded-3xl max-w-lg w-full p-6 shadow-2xl space-y-4">
-      <div class="flex justify-between items-center border-b border-slate-100 pb-3">
-        <h3 class="font-black text-base text-slate-900">🏷️ إنشاء كود وكوبون خصم تسويقي جديد</h3>
-        <button onclick="closeModal('modal-create-coupon')" class="text-slate-400 text-lg font-bold">✕</button>
-      </div>
-      <div class="space-y-3 text-xs">
+      <form onsubmit="event.preventDefault(); submitCourierDispatchVoucher();" class="space-y-3.5 text-xs">
         <div>
-          <label class="font-bold text-slate-700 block mb-1">رمز الكوبون (Promo Code):</label>
-          <input type="text" placeholder="مثال: MEGA2026" class="w-full border border-slate-200 p-2.5 rounded-xl font-mono font-black uppercase text-blue-600" />
+          <label class="font-black text-slate-700 block mb-1">اختر المندوب المسؤول عن خط السير:</label>
+          <select id="dispatch-driver-select" class="w-full border border-slate-200 p-2.5 rounded-xl font-bold bg-slate-50">
+            <option>أحمد محمود (قطاع المعادي وطرة - خط سير رقم 104)</option>
+            <option>محمود حسن (قطاع الدقي والمهندسين - خط سير رقم 108)</option>
+            <option>كابتن إبراهيم سامي (قطاع مدينة نصر والتجمع - خط سير 112)</option>
+          </select>
         </div>
-        <div class="grid grid-cols-2 gap-3">
-          <div>
-            <label class="font-bold text-slate-700 block mb-1">نوع الخصم:</label>
-            <select class="w-full border border-slate-200 p-2.5 rounded-xl font-bold">
-              <option>مبلغ خصم ثابت (ج.م)</option>
-              <option>نسبة مئوية (%)</option>
-              <option>شحن مجاني كامل</option>
-            </select>
-          </div>
-          <div>
-            <label class="font-bold text-slate-700 block mb-1">قيمة الخصم:</label>
-            <input type="number" placeholder="مثال: 50" class="w-full border border-slate-200 p-2.5 rounded-xl font-bold font-mono" />
+
+        <div>
+          <label class="font-black text-slate-700 block mb-1">مسح الباركود أو إدخال أرقام البوالص للشحنات:</label>
+          <div class="flex gap-2">
+            <input type="text" id="dispatch-barcode-input" placeholder="امسح بالباركود سكانر أو اكتب رقم البوليصة..." class="w-full border border-slate-200 p-2.5 rounded-xl font-mono font-bold" />
+            <button type="button" onclick="alert('⚡ تم مسح وإدراج البوليصة ORD-2026-10001 بنجاح!')" class="bg-slate-900 text-white px-4 rounded-xl font-bold shrink-0">إضافة</button>
           </div>
         </div>
-        <div class="grid grid-cols-2 gap-3">
-          <div>
-            <label class="font-bold text-slate-700 block mb-1">الحد الأدنى لقيمة السلة:</label>
-            <input type="number" placeholder="مثال: 300 ج.م" class="w-full border border-slate-200 p-2.5 rounded-xl font-bold font-mono" />
-          </div>
-          <div>
-            <label class="font-bold text-slate-700 block mb-1">الحد الأقصى لمرات الاستخدام:</label>
-            <input type="number" placeholder="مثال: 1000" class="w-full border border-slate-200 p-2.5 rounded-xl font-bold font-mono" />
+
+        <div class="p-3.5 bg-slate-50 rounded-2xl border border-slate-200 space-y-2">
+          <span class="font-black text-slate-700 block">البوالص والشحنات المحددة للإذن الحالي (٤ شحنات):</span>
+          <div class="space-y-1.5 font-mono text-[11px]">
+            <div class="flex justify-between p-2 bg-white rounded-lg border">
+              <span>#ORD-2026-10001 (سارة إبراهيم - المعادي)</span>
+              <b class="text-blue-600 font-bold">١,٥٠٠ ج.م</b>
+            </div>
+            <div class="flex justify-between p-2 bg-white rounded-lg border">
+              <span>#ORD-2026-10002 (محمد علي - المعادي)</span>
+              <b class="text-blue-600 font-bold">٢,٨٥٠ ج.م</b>
+            </div>
+            <div class="flex justify-between p-2 bg-white rounded-lg border">
+              <span>#ORD-2026-10003 (خالد سعيد - طرة)</span>
+              <b class="text-blue-600 font-bold">١,١٥٠ ج.م</b>
+            </div>
           </div>
         </div>
-      </div>
-      <button onclick="alert('🎉 تم إنشاء وتفعيل كود الخصم الجديد بنجاح في متجر العملاء!'); closeModal('modal-create-coupon');" class="w-full bg-blue-600 text-white py-2.5 rounded-xl text-xs font-black shadow-md">
-        حفظ وتفعيل الكوبون
-      </button>
+
+        <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 text-white py-3 rounded-xl text-xs font-black shadow transition">
+          📄 اعتماد إذن التوزيع وتوليد المانيفست الرسمي
+        </button>
+      </form>
     </div>
   </div>
 
   <script>
+    // حالة تسجيل الدخول والمستخدمين
+    let isLoggedInAdmin = false;
+    let isLoggedInDriver = false;
+    let currentRole = 'storefront';
+    let currentCheckoutItem = { name: 'سماعات بلوتوث ANC Pro', price: 1450, sku: 'ELEC-WRLS-001' };
+
+    function handleRoleSwitchClick(role) {
+      if (role === 'admin') {
+        if (!isLoggedInAdmin) {
+          openModal('modal-login-admin');
+          return;
+        }
+        setRole('admin');
+      } else if (role === 'driver') {
+        if (!isLoggedInDriver) {
+          openModal('modal-login-driver');
+          return;
+        }
+        setRole('driver');
+      } else {
+        setRole('storefront');
+      }
+    }
+
+    function submitAdminLogin() {
+      const id = document.getElementById('admin-login-id').value.trim();
+      isLoggedInAdmin = true;
+      closeModal('modal-login-admin');
+      setRole('admin');
+      alert('👑 مرحباً بك يا مدير عام المنظومة!\nتم تسجيل الدخول بنجاح بحساب (' + id + ') بكافة صلاحيات SuperAdmin.');
+    }
+
+    function submitDriverLogin() {
+      const phone = document.getElementById('driver-login-phone').value.trim();
+      isLoggedInDriver = true;
+      closeModal('modal-login-driver');
+      setRole('driver');
+      alert('🛵 مرحباً بك كابتن أحمد محمود!\nتم تسجيل دخول المندوب بنجاح (الهاتف: ' + phone + ') وتحميل خط السير اليومي.');
+    }
+
+    function logoutAdmin() {
+      isLoggedInAdmin = false;
+      setRole('storefront');
+      alert('تم تسجيل الخروج من لوحة المدير العام بنجاح.');
+    }
+
+    function logoutDriver() {
+      isLoggedInDriver = false;
+      setRole('storefront');
+      alert('تم تسجيل الخروج من تطبيق المندوب بنجاح.');
+    }
+
     function setRole(role) {
+      currentRole = role;
       document.getElementById('view-admin').classList.add('hidden');
       document.getElementById('view-driver').classList.add('hidden');
       document.getElementById('view-storefront').classList.add('hidden');
 
       document.querySelectorAll('.role-btn').forEach(b => {
-        b.classList.remove('bg-blue-600', 'text-white', 'shadow');
+        b.classList.remove('bg-orange-600', 'bg-blue-600', 'text-white', 'shadow');
         b.classList.add('text-slate-400');
       });
 
-      document.getElementById('view-' + role).classList.remove('hidden');
-      const activeBtn = document.getElementById('role-btn-' + role);
-      if (activeBtn) {
-        activeBtn.classList.remove('text-slate-400');
-        activeBtn.classList.add('bg-blue-600', 'text-white', 'shadow');
+      // إظهار وإخفاء عناصر الهيدر السياقية
+      const custNav = document.getElementById('header-customer-nav');
+      const adminNav = document.getElementById('header-admin-nav');
+      const driverNav = document.getElementById('header-driver-nav');
+
+      if (role === 'storefront') {
+        custNav.classList.remove('hidden');
+        custNav.classList.add('flex');
+        adminNav.classList.add('hidden');
+        adminNav.classList.remove('flex');
+        driverNav.classList.add('hidden');
+        driverNav.classList.remove('flex');
+
+        document.getElementById('view-storefront').classList.remove('hidden');
+        const activeBtn = document.getElementById('role-btn-storefront');
+        if (activeBtn) {
+          activeBtn.classList.remove('text-slate-400');
+          activeBtn.classList.add('bg-orange-600', 'text-white', 'shadow');
+        }
+      } else if (role === 'admin') {
+        custNav.classList.add('hidden');
+        custNav.classList.remove('flex');
+        adminNav.classList.remove('hidden');
+        adminNav.classList.add('flex');
+        driverNav.classList.add('hidden');
+        driverNav.classList.remove('flex');
+
+        document.getElementById('view-admin').classList.remove('hidden');
+        const activeBtn = document.getElementById('role-btn-admin');
+        if (activeBtn) {
+          activeBtn.classList.remove('text-slate-400');
+          activeBtn.classList.add('bg-orange-600', 'text-white', 'shadow');
+        }
+      } else if (role === 'driver') {
+        custNav.classList.add('hidden');
+        custNav.classList.remove('flex');
+        adminNav.classList.add('hidden');
+        adminNav.classList.remove('flex');
+        driverNav.classList.remove('hidden');
+        driverNav.classList.add('flex');
+
+        document.getElementById('view-driver').classList.remove('hidden');
+        const activeBtn = document.getElementById('role-btn-driver');
+        if (activeBtn) {
+          activeBtn.classList.remove('text-slate-400');
+          activeBtn.classList.add('bg-blue-600', 'text-white', 'shadow');
+        }
       }
+    }
+
+    function openDirectBuyModal(name, price, sku) {
+      currentCheckoutItem = { name, price, sku };
+      document.getElementById('checkout-summary-name').innerText = name;
+      document.getElementById('checkout-summary-sku').innerText = sku;
+      document.getElementById('checkout-summary-price').innerText = price.toLocaleString('ar-EG') + ' ج.م';
+      document.getElementById('checkout-calc-subtotal').innerText = price.toLocaleString('ar-EG') + ' ج.م';
+      recalcCheckoutShipping();
+      openModal('modal-checkout-gateway');
+    }
+
+    function openCartModal() {
+      openModal('modal-cart');
+    }
+
+    function recalcCheckoutShipping() {
+      const shippingFee = parseInt(document.getElementById('checkout-cust-gov').value, 10) || 40;
+      const subtotal = currentCheckoutItem.price || 1450;
+      const total = subtotal + shippingFee;
+
+      document.getElementById('checkout-calc-shipping').innerText = '+' + shippingFee.toLocaleString('ar-EG') + ' ج.م';
+      document.getElementById('checkout-calc-total').innerText = total.toLocaleString('ar-EG') + ' ج.م';
+    }
+
+    function selectPaymentMethod(method) {
+      document.querySelectorAll('.payment-method-label').forEach(l => {
+        l.classList.remove('border-2', 'border-orange-600', 'bg-orange-50', 'text-orange-950');
+        l.classList.add('border', 'border-slate-200', 'bg-white', 'text-slate-800');
+      });
+
+      if (event && event.currentTarget) {
+        event.currentTarget.classList.remove('border', 'border-slate-200', 'bg-white', 'text-slate-800');
+        event.currentTarget.classList.add('border-2', 'border-orange-600', 'bg-orange-50', 'text-orange-950');
+      }
+
+      document.getElementById('pay-details-instapay').classList.add('hidden');
+      document.getElementById('pay-details-vodafone').classList.add('hidden');
+
+      if (method === 'INSTAPAY') {
+        document.getElementById('pay-details-instapay').classList.remove('hidden');
+      } else if (method === 'VODAFONE') {
+        document.getElementById('pay-details-vodafone').classList.remove('hidden');
+      }
+    }
+
+    function submitCheckoutOrder() {
+      const name = document.getElementById('checkout-cust-name').value;
+      const phone = document.getElementById('checkout-cust-phone').value;
+      const address = document.getElementById('checkout-cust-address').value;
+      const govElem = document.getElementById('checkout-cust-gov');
+      const govText = govElem.options[govElem.selectedIndex].text.split('(')[0].trim();
+      const shippingFee = parseInt(govElem.value, 10) || 40;
+      const total = currentCheckoutItem.price + shippingFee;
+
+      const randomTracking = 'ORD-2026-' + Math.floor(10000 + Math.random() * 90000);
+
+      // تعبئة بيانات البوليصة
+      document.getElementById('wb-ticket-num').innerText = randomTracking;
+      document.getElementById('wb-ticket-name').innerText = name;
+      document.getElementById('wb-ticket-phone').innerText = phone;
+      document.getElementById('wb-ticket-address').innerText = address + ' (' + govText + ')';
+      document.getElementById('wb-ticket-prod').innerText = currentCheckoutItem.name;
+      document.getElementById('wb-ticket-total').innerText = total.toLocaleString('ar-EG') + ' ج.م';
+
+      closeModal('modal-checkout-gateway');
+      openModal('modal-waybill-invoice');
+    }
+
+    function printWaybillTicket() {
+      alert('🖨️ جاري إرسال البوليصة لطابعة الباركود الحرارية (4x6 / A4 Label)...');
+    }
+
+    function switchDriverSubTab(sub) {
+      document.getElementById('driver-tab-view-routes').classList.add('hidden');
+      document.getElementById('driver-tab-view-stock').classList.add('hidden');
+
+      document.querySelectorAll('.driver-sub-btn').forEach(b => {
+        b.classList.remove('bg-orange-600', 'text-white', 'shadow');
+        b.classList.add('text-slate-400');
+      });
+
+      if (sub === 'routes') {
+        document.getElementById('driver-tab-view-routes').classList.remove('hidden');
+        document.getElementById('driver-subtab-btn-routes').classList.remove('text-slate-400');
+        document.getElementById('driver-subtab-btn-routes').classList.add('bg-orange-600', 'text-white', 'shadow');
+      } else {
+        document.getElementById('driver-tab-view-stock').classList.remove('hidden');
+        document.getElementById('driver-subtab-btn-stock').classList.remove('text-slate-400');
+        document.getElementById('driver-subtab-btn-stock').classList.add('bg-orange-600', 'text-white', 'shadow');
+      }
+    }
+
+    function callCustomerPhone(phone, name) {
+      alert('📞 جاري الاتصال بالعميل (' + name + ') على الرقم: ' + phone);
+    }
+
+    function openCustomerLocation(address, coords) {
+      alert('📍 جاري فتح موقع العميل على خرائط جوجل:\nالعنوان: ' + address + '\nالإحداثيات: ' + coords);
+      window.open('https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(address), '_blank');
+    }
+
+    function openCourierDispatchModal() {
+      openModal('modal-courier-dispatch-voucher');
+    }
+
+    function submitCourierDispatchVoucher() {
+      const driver = document.getElementById('dispatch-driver-select').value;
+      alert('🎉 تم إصدار إذن التوزيع والمانيفست الرسمي بنجاح!\nالمندوب: ' + driver + '\nتم إسناد ٤ بوالص وطباعة كشوف التسليم.');
+      closeModal('modal-courier-dispatch-voucher');
     }
 
     function switchAdminTab(tab) {
@@ -2069,9 +2487,6 @@
       const accent = document.getElementById('theme-accent-hex').value;
       const radius = document.getElementById('theme-radius-select').value;
       const title = document.getElementById('cms-banner-title').value;
-      const desc = document.getElementById('cms-banner-desc').value;
-      const badge = document.getElementById('cms-banner-badge').value;
-      const cta = document.getElementById('cms-banner-cta').value;
 
       document.documentElement.style.setProperty('--store-primary-color', primary);
       document.documentElement.style.setProperty('--store-accent-color', accent);
@@ -2092,10 +2507,6 @@
       document.getElementById('detail-prod-title').innerText = name;
       document.getElementById('detail-prod-icon').innerText = icon;
       openModal('modal-product-detail');
-    }
-
-    function openDirectBuyModal(name, price, sku) {
-      alert('⚡ الشراء الفوري المباشر:\nتم إصدار بوليصة شحن فورية للمنتج (' + name + ') بمبلغ ' + (price + 50) + ' ج.م شامل الشحن السريع!');
     }
 
     function addToCart(name, price, sku) {
@@ -2121,7 +2532,7 @@
     }
 
     function openDriverPayoutModal(amount) {
-      alert('🏦 توريد العهدة لحسابات الشركة الرسمية:\n\nالمبلغ: ' + amount + ' ج.م\nإنستاباي: antigravity.logistics@instapay\nفودافون كاش: 01012345678\nالآيبان: EG380010004589201900000000000');
+      alert('🏦 توريد العهدة لحسابات شركة انطلاقه للشحن:\n\nالمبلغ: ' + amount + ' ج.م\nإنستاباي: antigravity.logistics@instapay\nفودافون كاش: 01092519210\nالآيبان: EG380010004589201900000000000');
     }
 
     function scrollToProducts() {
@@ -2130,4 +2541,5 @@
   </script>
 </body>
 </html>
+
 

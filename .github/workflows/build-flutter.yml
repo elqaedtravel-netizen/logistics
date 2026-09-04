@@ -3,16 +3,18 @@ name: Flutter Multi-Platform Cloud Build
 on:
   push:
     branches: [ main, master ]
+    tags: [ 'v*' ]
   pull_request:
     branches: [ main, master ]
   workflow_dispatch:
 
 permissions:
   contents: write
+  packages: write
 
 jobs:
-  build-android-apk:
-    name: 📱 Build Android Release APK
+  build-and-publish-android-apk:
+    name: 📱 Build & Publish Android Release APK
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
@@ -34,7 +36,7 @@ jobs:
         working-directory: ./frontend
         run: |
           flutter config --no-analytics
-          flutter create --platforms=android --org=io.antigravity.logistics .
+          flutter create --platforms=android --org=com.entelaqa.logistics .
           # Ensure minSdkVersion is at least 21 for mobile_scanner & modern plugins
           if [ -f "android/app/build.gradle" ]; then
             sed -i 's/minSdkVersion flutter.minSdkVersion/minSdkVersion 21/g' android/app/build.gradle || true
@@ -50,132 +52,50 @@ jobs:
         working-directory: ./frontend
         run: flutter build apk --release --no-tree-shake-icons
 
-      - name: Upload Android APK Artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: Driver-App-Android-APKs
-          path: frontend/build/app/outputs/flutter-apk/*.apk
-          retention-days: 14
-
-  build-windows-exe:
-    name: 🖥️ Build Windows Desktop Release (.exe)
-    runs-on: windows-latest
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-
-      - name: Setup Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          channel: 'stable'
-          cache: true
-
-      - name: Enable Windows Desktop & Configure Runner
-        working-directory: ./frontend
-        run: |
-          flutter config --enable-windows-desktop --no-analytics
-          flutter create --platforms=windows --org=io.antigravity.logistics .
-          flutter pub get
-
-      - name: Build Windows Desktop Release
-        working-directory: ./frontend
-        run: flutter build windows --release
-
-      - name: Compress Windows Executable Package
-        shell: pwsh
-        run: |
-          $releaseDir = Get-ChildItem -Path frontend/build/windows -Recurse -Directory -Filter "Release" | Select-Object -First 1
-          if ($releaseDir) {
-            Write-Host "Compressing from $($releaseDir.FullName)..."
-            Compress-Archive -Path "$($releaseDir.FullName)\*" -DestinationPath AntigravityLogistics-Windows-x64.zip -Force
-          } else {
-            Write-Host "Compressing entire build/windows..."
-            Compress-Archive -Path "frontend/build/windows/*" -DestinationPath AntigravityLogistics-Windows-x64.zip -Force
-          }
-
-      - name: Upload Windows Executable Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: Admin-Panel-Windows-x64-Release
-          path: AntigravityLogistics-Windows-x64.zip
-          retention-days: 14
-
-  build-web:
-    name: 🌐 Build Web App & Live Preview
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-
-      - name: Setup Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          channel: 'stable'
-          cache: true
-
-      - name: Configure Web Platform
-        working-directory: ./frontend
-        run: |
-          flutter config --enable-web --no-analytics
-          flutter create --platforms=web --org=io.antigravity.logistics .
-          flutter pub get
-          flutter build web --release --base-href "/logistics/"
-
-      - name: Upload Web Build Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: Logistics-Web-App
-          path: frontend/build/web
-          retention-days: 14
-
-  publish-github-release:
-    name: 🚀 Publish Official Release Assets (APK & Windows)
-    needs: [build-android-apk, build-windows-exe, build-web]
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-
-      - name: Download Android Artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: Driver-App-Android-APKs
-          path: download/apk
-
-      - name: Download Windows Artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: Admin-Panel-Windows-x64-Release
-          path: download/win
-
-      - name: Prepare Release Package Files
+      - name: Prepare APK Release Asset
         run: |
           mkdir -p release_assets
-          # Copy APK
-          find download/apk -name "*.apk" -exec cp {} release_assets/Entelaqa-Express-Driver-App.apk \; || true
-          # Copy Windows ZIP
-          find download/win -name "*.zip" -exec cp {} release_assets/Entelaqa-Express-Admin-Windows-x64.zip \; || true
+          # Locate built APK and copy
+          APK_PATH=$(find frontend/build/app/outputs/flutter-apk -name "*release*.apk" | head -n 1)
+          if [ -z "$APK_PATH" ]; then
+            APK_PATH=$(find frontend/build/app/outputs/flutter-apk -name "*.apk" | head -n 1)
+          fi
+          echo "Found APK at: $APK_PATH"
+          cp "$APK_PATH" release_assets/Entelaqa-Express-Driver-App.apk
           ls -la release_assets/
 
-      - name: Publish to GitHub Releases
+      - name: Upload Android APK Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Driver-App-Android-APK
+          path: release_assets/Entelaqa-Express-Driver-App.apk
+          retention-days: 30
+
+      - name: Publish Android APK to GitHub Releases
+        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v2
         with:
           tag_name: v1.0.0
-          name: "🚀 شركة انطلاقه للشحن والتوصيل - التطبيقات النهائية المعتمدة (v1.0.0)"
+          name: "🚀 شركة انطلاقه للشحن والتوصيل - التطبيقات الرسمية (v1.0.0)"
           body: |
             ## 🏢 شركة انطلاقه للشحن والتوصيل (Entelaqa Express Logistics Co. 🇪🇬)
-
-            مرحباً بك في صفحة التحميل الرسمية للتطبيقات والبرامج النهائية للمنظومة اللوجستية المتكاملة:
-
-            ### 📦 روابط تحميل التطبيقات والبرامج المباشرة:
-            * 📱 **تطبيق المندوب والسائقين (Android APK)**: `Entelaqa-Express-Driver-App.apk`  
-              *(مخصص لهواتف الأندرويد للمناديب لمتابعة خط السير، العهدة العينية بالصور والأسعار، خرائط اللوكيشن، وإثباتات التسليم)*
-            * 🖥️ **برنامج لوحة المدير العام للكمبيوتر (Windows Desktop x64)**: `Entelaqa-Express-Admin-Windows-x64.zip`  
-              *(نسخة مكتبية مخصصة لأجهزة الكمبيوتر واللابتوب بنظام Windows 10 / 11 لمتابعة غرف العمليات والمخازن والمالية)*
-            * 🌐 **المنصة السحابية المباشرة (Web App & Storefront)**:  
-              👉 [https://elqaedtravel-netizen.github.io/logistics/](https://elqaedtravel-netizen.github.io/logistics/)
-          files: release_assets/*
+            
+            مرحباً بك في صفحة التحميل المباشرة للإصدار النهائي المعتمد:
+            
+            ### 📱 تطبيق الأندرويد للمناديب والعملاء (Android APK):
+            * **تحميل التطبيق**: [`Entelaqa-Express-Driver-App.apk`](https://github.com/elqaedtravel-netizen/logistics/releases/download/v1.0.0/Entelaqa-Express-Driver-App.apk)
+            * **الميزات**:
+              * خط السير اليومي مع خرائط الملاحة 📍
+              * الاتصال المباشر بالعملاء 📞
+              * العهدة العينية بالصور والأسعار 📦
+              * ماسح الباركود السريع للكاميرا ⚡
+              * تسجيل وإثبات التسليم والتأجيلات مع الـ GPS
+            
+            ### 🌐 المنصة السحابية المباشرة (Web App):
+            👉 [https://elqaedtravel-netizen.github.io/logistics/](https://elqaedtravel-netizen.github.io/logistics/)
+          files: release_assets/Entelaqa-Express-Driver-App.apk
+          draft: false
+          prerelease: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 

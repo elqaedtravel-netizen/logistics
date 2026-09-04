@@ -157,175 +157,452 @@
   </header>
 
 
-  <!-- ==================== 1. الواجهة الافتراضية: متجر العملاء الاحترافي المتكامل (Storefront) ==================== -->
-  <main id="view-storefront" class="flex-1 overflow-y-auto bg-slate-100 text-slate-800 custom-scroll">
+  <!-- ==================== 1. الواجهة الافتراضية: متجر العملاء المخصص للعرض الطولي على الهواتف بملء الشاشة ==================== -->
+  <main id="view-storefront" class="flex-1 overflow-y-auto bg-slate-950 text-slate-100 custom-scroll relative">
     
-    <!-- البانر الترويجي الفاخر -->
-    <section class="gradient-hero text-white py-12 px-6 relative overflow-hidden">
-      <div class="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-8 relative z-10">
-        <div class="space-y-4 max-w-xl text-right">
-          <span class="inline-flex items-center gap-2 px-3.5 py-1.5 bg-orange-500/20 text-orange-400 rounded-full text-xs font-black border border-orange-500/30">
-            ⚡ أقوى عروض الشحن السريع في مصر 🇪🇬 - توصيل خلال 24 ساعة
-          </span>
-          <h2 class="text-3xl md:text-5xl font-black leading-tight text-white">
-            تسوق أفضل المنتجات مع خيار الشراء الفوري ومعاينة الفيديو!
-          </h2>
-          <p class="text-slate-300 text-sm leading-relaxed">
-            استمتع بتجربة تسوق ذكية: دفع عند الاستلام كاش 💵، إنستاباي 🟣، فيزا 💳 مع تتبع دقيق لموقع المندوب والتسليم في الموعد المحدد مع ضمان واسترجاع مجاني.
-          </p>
-          <div class="flex flex-wrap items-center gap-3 pt-2">
-            <button onclick="scrollToProducts()" class="bg-orange-600 hover:bg-orange-500 text-white px-6 py-3 rounded-2xl font-black text-sm shadow-xl transition flex items-center gap-2">
-              <span>تصفح المنتجات والأصناف المتاحة</span>
-              <span>↓</span>
-            </button>
-            <button onclick="openModal('modal-track-shipment')" class="bg-white/10 hover:bg-white/20 text-white border border-white/20 px-5 py-3 rounded-2xl font-bold text-sm transition flex items-center gap-1.5">
-              🔍 تتبع الشحنة وسجل التأجيلات
-            </button>
+    <!-- حاوية الشاشة الطولية للهاتف (تتمدد لملء الشاشة 100% على الموبايل وتتوسط بأناقة على الشاشات الكبيرة) -->
+    <div id="mobile-store-container" class="max-w-md md:max-w-xl mx-auto min-h-screen bg-slate-900 border-x border-slate-800/80 shadow-2xl flex flex-col pb-24 relative">
+      
+      <!-- 1. شريط تطبيق الهاتف العلوي (Mobile App Header & Search Bar) -->
+      <div class="sticky top-0 z-40 bg-slate-900/95 backdrop-blur-md px-4 py-3 border-b border-slate-800/80 space-y-2.5">
+        <!-- صف العنوان وتحديد الموقع وشارة العروض -->
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <div class="w-8 h-8 rounded-xl bg-gradient-to-tr from-orange-600 to-amber-500 text-white flex items-center justify-center font-black shadow-md text-sm">
+              ⚡
+            </div>
+            <div>
+              <div class="flex items-center gap-1.5">
+                <span class="font-black text-xs text-white">انطلاقه إكسبريس</span>
+                <span class="text-[9px] bg-emerald-500/20 text-emerald-400 font-extrabold px-1.5 py-0.5 rounded">مباشر 🟢</span>
+              </div>
+              <p class="text-[10px] text-slate-400 flex items-center gap-1">
+                <span>📍</span>
+                <span>التوصيل إلى:</span>
+                <b class="text-orange-400 font-bold">القاهرة ومصر (24 ساعة)</b>
+              </p>
+            </div>
           </div>
-        </div>
 
-        <!-- كارت ترويجي جانبي -->
-        <div class="bg-white/10 backdrop-blur-md p-6 rounded-3xl border border-white/20 text-white max-w-sm w-full space-y-4 shadow-2xl">
-          <div class="flex justify-between items-center">
-            <span class="text-xs font-black text-orange-400 uppercase">خصم خاص لفترة محدودة</span>
-            <span class="text-xs bg-emerald-500 text-white px-2 py-0.5 rounded-full font-bold">ضمان عامين</span>
-          </div>
-          <h3 class="text-lg font-black">سماعات ANC Pro اللاسلكية</h3>
-          <p class="text-xs text-slate-300">عزل ضوضاء هجين وصوت نقي 40 ساعة تشغيل</p>
-          <div class="flex items-baseline gap-2 pt-1">
-            <span class="text-3xl font-black text-white font-mono">1,450 <span class="text-xs font-sans">ج.م</span></span>
-            <span class="text-sm line-through text-slate-400 font-mono">1,850 ج.م</span>
-          </div>
-          <div class="grid grid-cols-2 gap-2">
-            <button onclick="openDirectBuyModal('سماعات ANC Pro اللاسلكية', 1450, 'ELEC-WRLS-001')" class="bg-orange-600 hover:bg-orange-500 text-white py-3 rounded-xl font-black text-xs transition shadow flex items-center justify-center gap-1">
-              ⚡ شراء الآن فوراً
+          <!-- أزرار الإجراء السريع بالهيدر -->
+          <div class="flex items-center gap-1.5">
+            <button onclick="openModal('modal-track-shipment')" class="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 text-xs transition" title="تتبع الشحنة">
+              🔍
             </button>
-            <button onclick="openProductDetailModal('سماعات ANC Pro اللاسلكية', 1450, 'ELEC-WRLS-001', '🎧')" class="bg-blue-600 hover:bg-blue-500 text-white py-3 rounded-xl font-bold text-xs transition shadow flex items-center justify-center gap-1">
-              🔍 تفاصيل وفيديو
+            <button onclick="openCartModal()" class="relative p-2 rounded-xl bg-orange-600 hover:bg-orange-500 text-white shadow transition" title="سلة المشتريات">
+              <span>🛒</span>
+              <span id="mobile-cart-badge" class="absolute -top-1.5 -right-1.5 bg-white text-orange-700 font-black px-1.5 py-0.2 rounded-full text-[9px] font-mono shadow">1</span>
             </button>
           </div>
         </div>
-      </div>
-    </section>
 
-    <!-- كتالوج المنتجات والأصناف -->
-    <section id="products-catalog" class="max-w-6xl mx-auto py-10 px-6 space-y-6">
-      <div class="flex justify-between items-end">
-        <div>
-          <span class="text-xs font-black text-blue-600 uppercase tracking-wider">كتالوج الأصناف المتاح للشحن الفوري</span>
-          <h3 class="text-2xl font-black text-slate-900 mt-1">منتجات متميزة مع إمكانية الشراء السريع ومعاينة الفيديو</h3>
+        <!-- شريط البحث السريع والفلترة الفورية -->
+        <div class="relative">
+          <input type="text" placeholder="ابحث عن منتج، سماعات، ساعات، بوليصة شحن..." class="w-full bg-slate-950 border border-slate-700/80 rounded-2xl py-2 px-3.5 pr-9 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-orange-500 font-bold transition" />
+          <span class="absolute right-3 top-2.5 text-xs text-slate-500">🔍</span>
+          <span class="absolute left-3 top-2.5 text-[10px] bg-slate-800 text-slate-400 px-1.5 py-0.5 rounded font-mono">4K Video</span>
         </div>
       </div>
 
-      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-        <!-- صنف 1 -->
-        <div class="bg-white border border-slate-200 rounded-3xl p-5 shadow-sm hover:shadow-md transition flex flex-col justify-between space-y-4">
-          <div class="space-y-3">
-            <div onclick="openProductDetailModal('سماعات بلوتوث ANC Pro', 1450, 'ELEC-WRLS-001', '🎧')" class="h-44 bg-slate-100 rounded-2xl flex items-center justify-center relative overflow-hidden cursor-pointer group">
-              <span class="text-6xl group-hover:scale-110 transition duration-300">🎧</span>
-              <span class="absolute top-3 right-3 bg-red-600 text-white font-black text-[10px] px-2.5 py-1 rounded-full">خصم 20٪</span>
-              <span class="absolute bottom-3 left-3 bg-black/60 backdrop-blur text-white text-[10px] font-bold px-2 py-0.5 rounded-md flex items-center gap-1">▶ فيديو 4K</span>
-            </div>
-            <div>
-              <span class="text-[11px] font-bold text-slate-400 font-mono">ELEC-WRLS-001</span>
-              <h4 class="font-black text-sm text-slate-900 mt-0.5">سماعات بلوتوث لاسلكية عازلة للضوضاء ANC Pro</h4>
-              <p class="text-xs text-slate-500 mt-1">صوت عالي النقاء وبطارية 40 ساعة</p>
+      <!-- 2. شريط قصص وعروض الفيديو السريعة (Instagram/TikTok Style Stories & Reels) -->
+      <div class="px-3 py-3 overflow-x-auto custom-scroll flex items-center gap-3 border-b border-slate-800/60 bg-slate-950/40">
+        <!-- قصة 1: عروض اليوم -->
+        <div onclick="scrollToProducts()" class="flex flex-col items-center gap-1 shrink-0 cursor-pointer group">
+          <div class="w-14 h-14 rounded-full p-0.5 bg-gradient-to-tr from-orange-500 via-amber-400 to-red-500 flex items-center justify-center shadow-lg group-hover:scale-105 transition">
+            <div class="w-full h-full bg-slate-900 rounded-full flex items-center justify-center text-xl">
+              ⚡
             </div>
           </div>
-          <div class="space-y-2 pt-2 border-t border-slate-100">
-            <p class="text-lg font-black text-slate-900 font-mono">1,450.00 <span class="text-xs font-sans text-slate-500">ج.م</span></p>
-            <div class="grid grid-cols-2 gap-2">
-              <button onclick="openDirectBuyModal('سماعات بلوتوث ANC Pro', 1450, 'ELEC-WRLS-001')" class="bg-orange-600 hover:bg-orange-500 text-white py-2.5 rounded-xl font-black text-xs transition shadow flex items-center justify-center gap-1">⚡ شراء الآن</button>
-              <button onclick="addToCart('سماعات بلوتوث ANC Pro', 1450, 'ELEC-WRLS-001')" class="bg-slate-100 hover:bg-slate-200 text-slate-800 py-2.5 rounded-xl font-bold text-xs transition flex items-center justify-center gap-1">🛒 للسلة</button>
-            </div>
-          </div>
+          <span class="text-[10px] font-black text-orange-400 text-center">عروض 24h</span>
         </div>
 
-        <!-- صنف 2 -->
-        <div class="bg-white border border-slate-200 rounded-3xl p-5 shadow-sm hover:shadow-md transition flex flex-col justify-between space-y-4">
-          <div class="space-y-3">
-            <div onclick="openProductDetailModal('ساعة رياضية ذكية أموليد GPS', 2850, 'ELEC-SMWT-002', '⌚')" class="h-44 bg-slate-100 rounded-2xl flex items-center justify-center relative overflow-hidden cursor-pointer group">
-              <span class="text-6xl group-hover:scale-110 transition duration-300">⌚</span>
-              <span class="absolute top-3 right-3 bg-blue-600 text-white font-black text-[10px] px-2.5 py-1 rounded-full">الأكثر مبيعاً</span>
-              <span class="absolute bottom-3 left-3 bg-black/60 backdrop-blur text-white text-[10px] font-bold px-2 py-0.5 rounded-md flex items-center gap-1">▶ فيديو 4K</span>
-            </div>
-            <div>
-              <span class="text-[11px] font-bold text-slate-400 font-mono">ELEC-SMWT-002</span>
-              <h4 class="font-black text-sm text-slate-900 mt-0.5">ساعة رياضية ذكية بشاشة أموليد GPS</h4>
-              <p class="text-xs text-slate-500 mt-1">تتبع اللياقة والمكالمات ونبضات القلب</p>
+        <!-- قصة 2: سماعات ANC -->
+        <div onclick="openProductDetailModal('سماعات بلوتوث ANC Pro', 1450, 'ELEC-WRLS-001', '🎧')" class="flex flex-col items-center gap-1 shrink-0 cursor-pointer group">
+          <div class="w-14 h-14 rounded-full p-0.5 bg-gradient-to-tr from-blue-500 to-indigo-500 flex items-center justify-center shadow group-hover:scale-105 transition">
+            <div class="w-full h-full bg-slate-900 rounded-full flex items-center justify-center text-xl">
+              🎧
             </div>
           </div>
-          <div class="space-y-2 pt-2 border-t border-slate-100">
-            <p class="text-lg font-black text-slate-900 font-mono">2,850.00 <span class="text-xs font-sans text-slate-500">ج.م</span></p>
-            <div class="grid grid-cols-2 gap-2">
-              <button onclick="openDirectBuyModal('ساعة رياضية ذكية أموليد GPS', 2850, 'ELEC-SMWT-002')" class="bg-orange-600 hover:bg-orange-500 text-white py-2.5 rounded-xl font-black text-xs transition shadow flex items-center justify-center gap-1">⚡ شراء الآن</button>
-              <button onclick="addToCart('ساعة رياضية ذكية أموليد GPS', 2850, 'ELEC-SMWT-002')" class="bg-slate-100 hover:bg-slate-200 text-slate-800 py-2.5 rounded-xl font-bold text-xs transition flex items-center justify-center gap-1">🛒 للسلة</button>
-            </div>
-          </div>
+          <span class="text-[10px] font-bold text-slate-300 text-center">سماعات ANC</span>
         </div>
 
-        <!-- صنف 3 -->
-        <div class="bg-white border border-slate-200 rounded-3xl p-5 shadow-sm hover:shadow-md transition flex flex-col justify-between space-y-4">
-          <div class="space-y-3">
-            <div onclick="openProductDetailModal('باور بنك سريع 20000mAh 65W', 1150, 'ELEC-CHRG-003', '🔋')" class="h-44 bg-slate-100 rounded-2xl flex items-center justify-center relative overflow-hidden cursor-pointer group">
-              <span class="text-6xl group-hover:scale-110 transition duration-300">🔋</span>
-              <span class="absolute bottom-3 left-3 bg-black/60 backdrop-blur text-white text-[10px] font-bold px-2 py-0.5 rounded-md flex items-center gap-1">▶ فيديو 4K</span>
-            </div>
-            <div>
-              <span class="text-[11px] font-bold text-slate-400 font-mono">ELEC-CHRG-003</span>
-              <h4 class="font-black text-sm text-slate-900 mt-0.5">باور بنك سريع 20000mAh مع شحن PD 65W</h4>
-              <p class="text-xs text-slate-500 mt-1">شحن سريع للابتوب والموبايل</p>
+        <!-- قصة 3: ساعات ذكية -->
+        <div onclick="openProductDetailModal('ساعة رياضية ذكية أموليد GPS', 2850, 'ELEC-SMWT-002', '⌚')" class="flex flex-col items-center gap-1 shrink-0 cursor-pointer group">
+          <div class="w-14 h-14 rounded-full p-0.5 bg-gradient-to-tr from-purple-500 to-pink-500 flex items-center justify-center shadow group-hover:scale-105 transition">
+            <div class="w-full h-full bg-slate-900 rounded-full flex items-center justify-center text-xl">
+              ⌚
             </div>
           </div>
-          <div class="space-y-2 pt-2 border-t border-slate-100">
-            <p class="text-lg font-black text-slate-900 font-mono">1,150.00 <span class="text-xs font-sans text-slate-500">ج.م</span></p>
-            <div class="grid grid-cols-2 gap-2">
-              <button onclick="openDirectBuyModal('باور بنك سريع 20000mAh', 1150, 'ELEC-CHRG-003')" class="bg-orange-600 hover:bg-orange-500 text-white py-2.5 rounded-xl font-black text-xs transition shadow flex items-center justify-center gap-1">⚡ شراء الآن</button>
-              <button onclick="addToCart('باور بنك سريع 20000mAh', 1150, 'ELEC-CHRG-003')" class="bg-slate-100 hover:bg-slate-200 text-slate-800 py-2.5 rounded-xl font-bold text-xs transition flex items-center justify-center gap-1">🛒 للسلة</button>
-            </div>
-          </div>
+          <span class="text-[10px] font-bold text-slate-300 text-center">ساعات ذكية</span>
         </div>
 
-        <!-- صنف 4 -->
-        <div class="bg-white border border-slate-200 rounded-3xl p-5 shadow-sm hover:shadow-md transition flex flex-col justify-between space-y-4">
-          <div class="space-y-3">
-            <div onclick="openProductDetailModal('ذراع تحكم ألعاب لاسلكي برو', 950, 'ELEC-GAME-004', '🎮')" class="h-44 bg-slate-100 rounded-2xl flex items-center justify-center relative overflow-hidden cursor-pointer group">
-              <span class="text-6xl group-hover:scale-110 transition duration-300">🎮</span>
-              <span class="absolute bottom-3 left-3 bg-black/60 backdrop-blur text-white text-[10px] font-bold px-2 py-0.5 rounded-md flex items-center gap-1">▶ فيديو 4K</span>
-            </div>
-            <div>
-              <span class="text-[11px] font-bold text-slate-400 font-mono">ELEC-GAME-004</span>
-              <h4 class="font-black text-sm text-slate-900 mt-0.5">ذراع تحكم لاسلكي للألعاب والكمبيوتر والموبايل</h4>
-              <p class="text-xs text-slate-500 mt-1">اهتزاز مزدوج واستجابة فائقة</p>
+        <!-- قصة 4: شواحن سريعة -->
+        <div onclick="openProductDetailModal('باور بنك سريع 20000mAh 65W', 1150, 'ELEC-CHRG-003', '🔋')" class="flex flex-col items-center gap-1 shrink-0 cursor-pointer group">
+          <div class="w-14 h-14 rounded-full p-0.5 bg-gradient-to-tr from-emerald-500 to-teal-400 flex items-center justify-center shadow group-hover:scale-105 transition">
+            <div class="w-full h-full bg-slate-900 rounded-full flex items-center justify-center text-xl">
+              🔋
             </div>
           </div>
-          <div class="space-y-2 pt-2 border-t border-slate-100">
-            <p class="text-lg font-black text-slate-900 font-mono">950.00 <span class="text-xs font-sans text-slate-500">ج.م</span></p>
-            <div class="grid grid-cols-2 gap-2">
-              <button onclick="openDirectBuyModal('ذراع تحكم ألعاب لاسلكي برو', 950, 'ELEC-GAME-004')" class="bg-orange-600 hover:bg-orange-500 text-white py-2.5 rounded-xl font-black text-xs transition shadow flex items-center justify-center gap-1">⚡ شراء الآن</button>
-              <button onclick="addToCart('ذراع تحكم ألعاب لاسلكي برو', 950, 'ELEC-GAME-004')" class="bg-slate-100 hover:bg-slate-200 text-slate-800 py-2.5 rounded-xl font-bold text-xs transition flex items-center justify-center gap-1">🛒 للسلة</button>
+          <span class="text-[10px] font-bold text-slate-300 text-center">شحن سريع</span>
+        </div>
+
+        <!-- قصة 5: ألعاب وجيمنج -->
+        <div onclick="openProductDetailModal('ذراع تحكم ألعاب لاسلكي برو', 950, 'ELEC-GAME-004', '🎮')" class="flex flex-col items-center gap-1 shrink-0 cursor-pointer group">
+          <div class="w-14 h-14 rounded-full p-0.5 bg-gradient-to-tr from-amber-500 to-yellow-400 flex items-center justify-center shadow group-hover:scale-105 transition">
+            <div class="w-full h-full bg-slate-900 rounded-full flex items-center justify-center text-xl">
+              🎮
+            </div>
+          </div>
+          <span class="text-[10px] font-bold text-slate-300 text-center">جيمنج Pro</span>
+        </div>
+
+        <!-- قصة 6: معاينة الطرد -->
+        <div onclick="openModal('modal-track-shipment')" class="flex flex-col items-center gap-1 shrink-0 cursor-pointer group">
+          <div class="w-14 h-14 rounded-full p-0.5 bg-gradient-to-tr from-slate-600 to-slate-400 flex items-center justify-center shadow group-hover:scale-105 transition">
+            <div class="w-full h-full bg-slate-900 rounded-full flex items-center justify-center text-xl">
+              📦
+            </div>
+          </div>
+          <span class="text-[10px] font-bold text-slate-300 text-center">فتح الطرد</span>
+        </div>
+      </div>
+
+      <!-- 3. البانر الطولي الترويجي الرئيسي للهاتف (Vertical Hero Banner Card) -->
+      <div class="p-4">
+        <div class="bg-gradient-to-br from-indigo-950 via-slate-900 to-slate-950 rounded-3xl p-5 border border-indigo-500/30 text-white relative overflow-hidden shadow-2xl space-y-4">
+          <!-- خلفية جمالية متوهجة -->
+          <div class="absolute -top-12 -left-12 w-36 h-36 bg-orange-600/20 rounded-full blur-2xl"></div>
+          <div class="absolute -bottom-12 -right-12 w-36 h-36 bg-indigo-600/20 rounded-full blur-2xl"></div>
+
+          <!-- شارات العرض والعد التنازلي -->
+          <div class="flex items-center justify-between relative z-10">
+            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-orange-500/20 text-orange-400 rounded-full text-[10px] font-black border border-orange-500/30">
+              <span>🔥</span><span>خصم 20٪ + شحن مجاني اليوم</span>
+            </span>
+            <span class="text-[10px] text-amber-300 font-mono font-bold bg-black/40 px-2 py-0.5 rounded-md border border-amber-500/30">
+              ⏰ ينتهي: 04:22:15
+            </span>
+          </div>
+
+          <!-- العنوان الترويجي الطولي -->
+          <div class="space-y-1.5 relative z-10">
+            <h2 class="text-xl font-black leading-snug text-white">
+              سماعات ANC Pro اللاسلكية الأصلية 🎧
+            </h2>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              عزل ضوضاء هجين، صوت نقي فائق الدقة، وبطارية 40 ساعة تشغيل متواصل مع ضمان استبدال مجاني عامين.
+            </p>
+          </div>
+
+          <!-- السعر وأزرار الشراء الفوري -->
+          <div class="pt-2 border-t border-slate-800/80 flex items-center justify-between relative z-10">
+            <div>
+              <span class="text-[10px] text-slate-400 block">السعر الخاص بعد الخصم:</span>
+              <div class="flex items-baseline gap-1.5">
+                <span class="text-2xl font-black text-white font-mono">1,450.00 <span class="text-xs font-sans text-orange-400">ج.م</span></span>
+                <span class="text-xs line-through text-slate-500 font-mono">1,850 ج.م</span>
+              </div>
+            </div>
+
+            <div class="flex gap-2">
+              <button onclick="openDirectBuyModal('سماعات ANC Pro اللاسلكية', 1450, 'ELEC-WRLS-001')" class="bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-500 hover:to-amber-500 text-white px-4 py-2.5 rounded-2xl font-black text-xs shadow-lg transition flex items-center gap-1.5">
+                <span>⚡</span><span>شراء فوري</span>
+              </button>
+              <button onclick="openProductDetailModal('سماعات ANC Pro اللاسلكية', 1450, 'ELEC-WRLS-001', '🎧')" class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-3 py-2.5 rounded-2xl font-bold text-xs border border-slate-700 transition" title="معاينة الفيديو والتفاصيل">
+                ▶ 4K
+              </button>
             </div>
           </div>
         </div>
       </div>
-    </section>
 
-    <!-- التذييل الدعائي والترويجي المصغر -->
-    <footer class="bg-slate-900 text-slate-300 py-8 px-6 border-t border-slate-800 mt-12">
-      <div class="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 text-center md:text-right">
-        <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center text-white font-black text-base shadow-lg">AG</div>
-          <div>
-            <p class="font-black text-sm text-white">منظومة أنتيجرافيتي للحلول الرقمية واللوجستية 🚀</p>
-            <p class="text-xs text-slate-400">تم التطوير والتشغيل بأعلى معايير المؤسسات السحابية العالمية</p>
-          </div>
-        </div>
-        <div class="text-xs text-slate-400">
-          <p>شريكك التكنولوجي الموثوق للنمو السريع والتجارة الإلكترونية في الشرق الأوسط 🇪🇬</p>
-          <p class="text-[11px] text-slate-500 mt-1">جميع الحقوق محفوظة © 2026 Antigravity Logistics Platform</p>
+      <!-- 4. شرائح التصنيفات والفلترة السريعة (Horizontal Category Pills) -->
+      <div class="px-4 pb-2">
+        <div class="flex items-center gap-2 overflow-x-auto custom-scroll text-xs font-bold pb-1">
+          <button class="px-3.5 py-1.5 bg-orange-600 text-white rounded-xl shrink-0 font-black shadow-sm">
+            🔥 الأكثر طلباً
+          </button>
+          <button class="px-3.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl shrink-0 border border-slate-700/80 transition">
+            ⚡ شحن في 4 ساعات
+          </button>
+          <button class="px-3.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl shrink-0 border border-slate-700/80 transition">
+            🎧 إلكترونيات وسماعات
+          </button>
+          <button class="px-3.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl shrink-0 border border-slate-700/80 transition">
+            ⌚ ساعات ذكية
+          </button>
+          <button class="px-3.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl shrink-0 border border-slate-700/80 transition">
+            🛡️ ضمان مجاني
+          </button>
         </div>
       </div>
-    </footer>
+
+      <!-- 5. تغذية المنتجات الطولية بملء الشاشة (Vertical Mobile Product Feed) -->
+      <div id="products-catalog" class="px-4 space-y-4 pt-1">
+        
+        <div class="flex items-center justify-between text-xs pt-1">
+          <h3 class="font-black text-sm text-white flex items-center gap-1.5">
+            <span>🛍️</span><span>المنتجات المتاحة للشحن الفوري</span>
+          </h3>
+          <span class="text-[11px] text-orange-400 font-mono font-bold">4 أصناف جاهزة للتسليم</span>
+        </div>
+
+        <!-- كارت صنف 1 (سماعات بلوتوث ANC Pro) -->
+        <div class="bg-slate-800/80 border border-slate-700/80 rounded-3xl p-4 shadow-lg space-y-3.5 hover:border-orange-500/50 transition">
+          <div class="flex gap-3.5">
+            <!-- صورة المنتج ومعاينة الفيديو -->
+            <div onclick="openProductDetailModal('سماعات بلوتوث ANC Pro', 1450, 'ELEC-WRLS-001', '🎧')" class="w-28 h-28 bg-slate-900 rounded-2xl flex items-center justify-center relative overflow-hidden cursor-pointer group shrink-0 border border-slate-700">
+              <span class="text-5xl group-hover:scale-110 transition duration-300">🎧</span>
+              <span class="absolute top-2 right-2 bg-red-600 text-white font-black text-[9px] px-1.5 py-0.5 rounded-full">خصم 20٪</span>
+              <span class="absolute bottom-2 left-2 bg-black/70 backdrop-blur text-white text-[9px] font-bold px-1.5 py-0.5 rounded flex items-center gap-1">▶ 4K</span>
+            </div>
+
+            <!-- تفاصيل المنتج والتقييم -->
+            <div class="flex-1 flex flex-col justify-between">
+              <div>
+                <div class="flex items-center justify-between">
+                  <span class="text-[10px] font-mono text-slate-400">#ELEC-WRLS-001</span>
+                  <span class="text-[10px] text-amber-400 font-bold">⭐ 4.9 (148 تقييم)</span>
+                </div>
+                <h4 class="font-black text-xs text-white mt-1 leading-snug">سماعات بلوتوث لاسلكية عازلة للضوضاء ANC Pro</h4>
+                <p class="text-[11px] text-slate-400 mt-1 line-clamp-1">صوت عالي النقاء وبطارية 40 ساعة تشغيل</p>
+              </div>
+
+              <div class="flex items-center gap-1.5 text-[10px] text-emerald-400 font-bold mt-1">
+                <span>✓</span><span>متبقي 3 قطع فقط بالمخزن</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- السعر وأزرار الشراء الفوري والسلة -->
+          <div class="pt-2.5 border-t border-slate-700/60 flex items-center justify-between">
+            <div>
+              <span class="text-[10px] text-slate-400 block">السعر:</span>
+              <p class="text-base font-black text-white font-mono">1,450.00 <span class="text-[10px] font-sans text-orange-400">ج.م</span></p>
+            </div>
+            <div class="flex gap-2">
+              <button onclick="openDirectBuyModal('سماعات بلوتوث ANC Pro', 1450, 'ELEC-WRLS-001')" class="bg-orange-600 hover:bg-orange-500 text-white px-4 py-2 rounded-xl font-black text-xs shadow transition flex items-center gap-1">
+                <span>⚡</span><span>شراء مباشر</span>
+              </button>
+              <button onclick="addToCart('سماعات بلوتوث ANC Pro', 1450, 'ELEC-WRLS-001')" class="bg-slate-700 hover:bg-slate-600 text-white px-3 py-2 rounded-xl font-bold text-xs transition" title="إضافة للسلة">
+                🛒
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- كارت صنف 2 (ساعة رياضية ذكية أموليد GPS) -->
+        <div class="bg-slate-800/80 border border-slate-700/80 rounded-3xl p-4 shadow-lg space-y-3.5 hover:border-blue-500/50 transition">
+          <div class="flex gap-3.5">
+            <!-- صورة المنتج ومعاينة الفيديو -->
+            <div onclick="openProductDetailModal('ساعة رياضية ذكية أموليد GPS', 2850, 'ELEC-SMWT-002', '⌚')" class="w-28 h-28 bg-slate-900 rounded-2xl flex items-center justify-center relative overflow-hidden cursor-pointer group shrink-0 border border-slate-700">
+              <span class="text-5xl group-hover:scale-110 transition duration-300">⌚</span>
+              <span class="absolute top-2 right-2 bg-blue-600 text-white font-black text-[9px] px-1.5 py-0.5 rounded-full">الأكثر مبيعاً</span>
+              <span class="absolute bottom-2 left-2 bg-black/70 backdrop-blur text-white text-[9px] font-bold px-1.5 py-0.5 rounded flex items-center gap-1">▶ 4K</span>
+            </div>
+
+            <!-- تفاصيل المنتج والتقييم -->
+            <div class="flex-1 flex flex-col justify-between">
+              <div>
+                <div class="flex items-center justify-between">
+                  <span class="text-[10px] font-mono text-slate-400">#ELEC-SMWT-002</span>
+                  <span class="text-[10px] text-amber-400 font-bold">⭐ 5.0 (312 تقييم)</span>
+                </div>
+                <h4 class="font-black text-xs text-white mt-1 leading-snug">ساعة رياضية ذكية بشاشة أموليد GPS</h4>
+                <p class="text-[11px] text-slate-400 mt-1 line-clamp-1">تتبع اللياقة والمكالمات ونبضات القلب بدقة</p>
+              </div>
+
+              <div class="flex items-center gap-1.5 text-[10px] text-blue-400 font-bold mt-1">
+                <span>⚡</span><span>شحن سريع في نفس اليوم</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- السعر وأزرار الشراء الفوري والسلة -->
+          <div class="pt-2.5 border-t border-slate-700/60 flex items-center justify-between">
+            <div>
+              <span class="text-[10px] text-slate-400 block">السعر:</span>
+              <p class="text-base font-black text-white font-mono">2,850.00 <span class="text-[10px] font-sans text-orange-400">ج.م</span></p>
+            </div>
+            <div class="flex gap-2">
+              <button onclick="openDirectBuyModal('ساعة رياضية ذكية أموليد GPS', 2850, 'ELEC-SMWT-002')" class="bg-orange-600 hover:bg-orange-500 text-white px-4 py-2 rounded-xl font-black text-xs shadow transition flex items-center gap-1">
+                <span>⚡</span><span>شراء مباشر</span>
+              </button>
+              <button onclick="addToCart('ساعة رياضية ذكية أموليد GPS', 2850, 'ELEC-SMWT-002')" class="bg-slate-700 hover:bg-slate-600 text-white px-3 py-2 rounded-xl font-bold text-xs transition" title="إضافة للسلة">
+                🛒
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- كارت صنف 3 (باور بنك سريع 20000mAh) -->
+        <div class="bg-slate-800/80 border border-slate-700/80 rounded-3xl p-4 shadow-lg space-y-3.5 hover:border-emerald-500/50 transition">
+          <div class="flex gap-3.5">
+            <!-- صورة المنتج ومعاينة الفيديو -->
+            <div onclick="openProductDetailModal('باور بنك سريع 20000mAh 65W', 1150, 'ELEC-CHRG-003', '🔋')" class="w-28 h-28 bg-slate-900 rounded-2xl flex items-center justify-center relative overflow-hidden cursor-pointer group shrink-0 border border-slate-700">
+              <span class="text-5xl group-hover:scale-110 transition duration-300">🔋</span>
+              <span class="absolute bottom-2 left-2 bg-black/70 backdrop-blur text-white text-[9px] font-bold px-1.5 py-0.5 rounded flex items-center gap-1">▶ 4K</span>
+            </div>
+
+            <!-- تفاصيل المنتج والتقييم -->
+            <div class="flex-1 flex flex-col justify-between">
+              <div>
+                <div class="flex items-center justify-between">
+                  <span class="text-[10px] font-mono text-slate-400">#ELEC-CHRG-003</span>
+                  <span class="text-[10px] text-amber-400 font-bold">⭐ 4.8 (85 تقييم)</span>
+                </div>
+                <h4 class="font-black text-xs text-white mt-1 leading-snug">باور بنك سريع 20000mAh مع شحن PD 65W</h4>
+                <p class="text-[11px] text-slate-400 mt-1 line-clamp-1">شحن سريع للابتوب والموبايل مع مخرج Type-C</p>
+              </div>
+
+              <div class="flex items-center gap-1.5 text-[10px] text-emerald-400 font-bold mt-1">
+                <span>✓</span><span>ضمان معتمد 18 شهر</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- السعر وأزرار الشراء الفوري والسلة -->
+          <div class="pt-2.5 border-t border-slate-700/60 flex items-center justify-between">
+            <div>
+              <span class="text-[10px] text-slate-400 block">السعر:</span>
+              <p class="text-base font-black text-white font-mono">1,150.00 <span class="text-[10px] font-sans text-orange-400">ج.م</span></p>
+            </div>
+            <div class="flex gap-2">
+              <button onclick="openDirectBuyModal('باور بنك سريع 20000mAh', 1150, 'ELEC-CHRG-003')" class="bg-orange-600 hover:bg-orange-500 text-white px-4 py-2 rounded-xl font-black text-xs shadow transition flex items-center gap-1">
+                <span>⚡</span><span>شراء مباشر</span>
+              </button>
+              <button onclick="addToCart('باور بنك سريع 20000mAh', 1150, 'ELEC-CHRG-003')" class="bg-slate-700 hover:bg-slate-600 text-white px-3 py-2 rounded-xl font-bold text-xs transition" title="إضافة للسلة">
+                🛒
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- كارت صنف 4 (ذراع تحكم ألعاب لاسلكي برو) -->
+        <div class="bg-slate-800/80 border border-slate-700/80 rounded-3xl p-4 shadow-lg space-y-3.5 hover:border-purple-500/50 transition">
+          <div class="flex gap-3.5">
+            <!-- صورة المنتج ومعاينة الفيديو -->
+            <div onclick="openProductDetailModal('ذراع تحكم ألعاب لاسلكي برو', 950, 'ELEC-GAME-004', '🎮')" class="w-28 h-28 bg-slate-900 rounded-2xl flex items-center justify-center relative overflow-hidden cursor-pointer group shrink-0 border border-slate-700">
+              <span class="text-5xl group-hover:scale-110 transition duration-300">🎮</span>
+              <span class="absolute bottom-2 left-2 bg-black/70 backdrop-blur text-white text-[9px] font-bold px-1.5 py-0.5 rounded flex items-center gap-1">▶ 4K</span>
+            </div>
+
+            <!-- تفاصيل المنتج والتقييم -->
+            <div class="flex-1 flex flex-col justify-between">
+              <div>
+                <div class="flex items-center justify-between">
+                  <span class="text-[10px] font-mono text-slate-400">#ELEC-GAME-004</span>
+                  <span class="text-[10px] text-amber-400 font-bold">⭐ 4.9 (92 تقييم)</span>
+                </div>
+                <h4 class="font-black text-xs text-white mt-1 leading-snug">ذراع تحكم ألعاب لاسلكي للكمبيوتر والموبايل</h4>
+                <p class="text-[11px] text-slate-400 mt-1 line-clamp-1">اهتزاز مزدوج واستجابة فائقة بدون لاج</p>
+              </div>
+
+              <div class="flex items-center gap-1.5 text-[10px] text-purple-400 font-bold mt-1">
+                <span>🎮</span><span>متوافق مع Android و iOS و PC</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- السعر وأزرار الشراء الفوري والسلة -->
+          <div class="pt-2.5 border-t border-slate-700/60 flex items-center justify-between">
+            <div>
+              <span class="text-[10px] text-slate-400 block">السعر:</span>
+              <p class="text-base font-black text-white font-mono">950.00 <span class="text-[10px] font-sans text-orange-400">ج.م</span></p>
+            </div>
+            <div class="flex gap-2">
+              <button onclick="openDirectBuyModal('ذراع تحكم ألعاب لاسلكي برو', 950, 'ELEC-GAME-004')" class="bg-orange-600 hover:bg-orange-500 text-white px-4 py-2 rounded-xl font-black text-xs shadow transition flex items-center gap-1">
+                <span>⚡</span><span>شراء مباشر</span>
+              </button>
+              <button onclick="addToCart('ذراع تحكم ألعاب لاسلكي برو', 950, 'ELEC-GAME-004')" class="bg-slate-700 hover:bg-slate-600 text-white px-3 py-2 rounded-xl font-bold text-xs transition" title="إضافة للسلة">
+                🛒
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- 6. مميزات وضمانات الشحن من شركة انطلاقه (Trust Badges Strip) -->
+      <div class="p-4">
+        <div class="bg-slate-950/80 rounded-3xl p-4 border border-slate-800 space-y-3 text-xs">
+          <div class="grid grid-cols-2 gap-3">
+            <div class="flex items-center gap-2 p-2 bg-slate-900 rounded-xl border border-slate-800/80">
+              <span class="text-lg">🚚</span>
+              <div>
+                <p class="font-black text-white text-[11px]">شحن سريع 24h</p>
+                <p class="text-[9px] text-slate-400">توصيل لكافة المحافظات</p>
+              </div>
+            </div>
+            <div class="flex items-center gap-2 p-2 bg-slate-900 rounded-xl border border-slate-800/80">
+              <span class="text-lg">📦</span>
+              <div>
+                <p class="font-black text-white text-[11px]">معاينة قبل الدفع</p>
+                <p class="text-[9px] text-slate-400">افتح الطرد وعاينه</p>
+              </div>
+            </div>
+            <div class="flex items-center gap-2 p-2 bg-slate-900 rounded-xl border border-slate-800/80">
+              <span class="text-lg">💳</span>
+              <div>
+                <p class="font-black text-white text-[11px]">دفع متعدد</p>
+                <p class="text-[9px] text-slate-400">كاش، إنستاباي، فيزا</p>
+              </div>
+            </div>
+            <div class="flex items-center gap-2 p-2 bg-slate-900 rounded-xl border border-slate-800/80">
+              <span class="text-lg">🔄</span>
+              <div>
+                <p class="font-black text-white text-[11px]">استرجاع مجاني</p>
+                <p class="text-[9px] text-slate-400">ضمان استبدال فوري</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 7. تذييل شاشة الموبايل -->
+      <div class="px-4 py-6 text-center space-y-2 border-t border-slate-800/80 text-xs text-slate-500">
+        <div class="flex items-center justify-center gap-2">
+          <div class="w-6 h-6 rounded-lg bg-orange-600 text-white flex items-center justify-center text-xs font-black">⚡</div>
+          <span class="font-black text-slate-300">شركة انطلاقه للشحن والتوصيل 🇪🇬</span>
+        </div>
+        <p class="text-[10px]">خدمات الشحن السريع والتجارة الإلكترونية بالشرق الأوسط © 2026</p>
+      </div>
+
+      <!-- 8. شريط التنقل السفلي الثابت للهاتف الذكي (Mobile Bottom Navigation Bar) -->
+      <nav class="fixed bottom-0 left-0 right-0 z-50 bg-slate-950/95 backdrop-blur-xl border-t border-slate-800 py-2 px-4 flex items-center justify-around text-xs shadow-2xl max-w-md md:max-w-xl mx-auto">
+        <!-- 1. الرئيسية -->
+        <button onclick="setRole('storefront'); window.scrollTo({top:0, behavior:'smooth'});" class="flex flex-col items-center gap-1 text-orange-500 font-bold transition">
+          <span class="text-lg">🏠</span>
+          <span class="text-[10px] font-black">الرئيسية</span>
+        </button>
+
+        <!-- 2. تتبع الشحنة -->
+        <button onclick="openModal('modal-track-shipment')" class="flex flex-col items-center gap-1 text-slate-400 hover:text-white transition">
+          <span class="text-lg">🔍</span>
+          <span class="text-[10px]">تتبع شحنتك</span>
+        </button>
+
+        <!-- 3. سلة المشتريات مع عداد -->
+        <button onclick="openCartModal()" class="flex flex-col items-center gap-1 text-slate-400 hover:text-white transition relative">
+          <span class="text-lg">🛒</span>
+          <span class="text-[10px]">السلة</span>
+          <span id="bottom-cart-counter" class="absolute -top-1 right-2 bg-orange-600 text-white font-black px-1.5 py-0.2 rounded-full text-[8px] font-mono shadow">1</span>
+        </button>
+
+        <!-- 4. الاقتراحات والشكاوى -->
+        <button onclick="openModal('modal-support-ticket')" class="flex flex-col items-center gap-1 text-slate-400 hover:text-white transition">
+          <span class="text-lg">💬</span>
+          <span class="text-[10px]">الشكاوى</span>
+        </button>
+
+        <!-- 5. الدخول / الحساب -->
+        <button onclick="toggleLoginDropdown()" class="flex flex-col items-center gap-1 text-slate-400 hover:text-white transition">
+          <span class="text-lg">👤</span>
+          <span class="text-[10px]">الحساب</span>
+        </button>
+      </nav>
+
+    </div>
   </main>
 
   <!-- ==================== 2. تطبيق المندوب الموسع والمكثف بالكامل (Driver Mobile App) ==================== -->
@@ -2859,8 +3136,16 @@
       openModal('modal-product-detail');
     }
 
+    let cartCount = 1;
     function addToCart(name, price, sku) {
-      alert('🛒 تم إضافة (' + name + ') إلى عربة التسوق بنجاح!');
+      cartCount++;
+      const c1 = document.getElementById('cart-counter');
+      const c2 = document.getElementById('mobile-cart-badge');
+      const c3 = document.getElementById('bottom-cart-counter');
+      if (c1) c1.innerText = cartCount;
+      if (c2) c2.innerText = cartCount;
+      if (c3) c3.innerText = cartCount;
+      alert('🛒 تم إضافة (' + name + ') إلى سلة المشتريات بنجاح!\nإجمالي عدد الأصناف بالسلة: ' + cartCount);
     }
 
     function confirmDriverDeliver() {

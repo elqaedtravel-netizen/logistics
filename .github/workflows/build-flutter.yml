@@ -32,20 +32,10 @@ jobs:
           channel: 'stable'
           cache: true
 
-      - name: Configure Android Project Platforms
+      - name: Install Flutter Dependencies
         working-directory: ./frontend
         run: |
           flutter config --no-analytics
-          flutter create --platforms=android --org=com.entelaqa.logistics .
-          # Ensure minSdkVersion is at least 21 for mobile_scanner & modern plugins
-          if [ -f "android/app/build.gradle" ]; then
-            sed -i 's/minSdkVersion flutter.minSdkVersion/minSdkVersion 21/g' android/app/build.gradle || true
-            sed -i 's/minSdkVersion [0-9]*/minSdkVersion 21/g' android/app/build.gradle || true
-          fi
-          if [ -f "android/app/build.gradle.kts" ]; then
-            sed -i 's/minSdk = flutter.minSdkVersion/minSdk = 21/g' android/app/build.gradle.kts || true
-            sed -i 's/minSdk = [0-9]*/minSdk = 21/g' android/app/build.gradle.kts || true
-          fi
           flutter pub get
 
       - name: Build Android Release APK

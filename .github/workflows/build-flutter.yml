@@ -32,15 +32,20 @@ jobs:
           channel: 'stable'
           cache: true
 
-      - name: Install Flutter Dependencies
+      - name: Configure Android Project
         working-directory: ./frontend
         run: |
           flutter config --no-analytics
+          # Re-align Android wrapper/gradle configuration with Flutter SDK standard
+          flutter create . --org com.entelaqa --project-name antigravity_logistics_app --platforms=android
+          # Re-apply permissions and configs
+          sed -i '/<manifest/a \    <uses-permission android:name="android.permission.INTERNET"/>\n    <uses-permission android:name="android.permission.CAMERA"/>\n    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>\n    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>\n    <uses-permission android:name="android.permission.CALL_PHONE"/>' android/app/src/main/AndroidManifest.xml
+          sed -i 's/android:label="antigravity_logistics_app"/android:label="شركة انطلاقه للشحن"/' android/app/src/main/AndroidManifest.xml
           flutter pub get
 
       - name: Build Android Release APK
         working-directory: ./frontend
-        run: flutter build apk --release --verbose --no-tree-shake-icons
+        run: flutter build apk --release --no-tree-shake-icons
 
       - name: Prepare APK Release Asset
         run: |
@@ -88,6 +93,3 @@ jobs:
           prerelease: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-
-

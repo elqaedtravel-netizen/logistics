@@ -41,14 +41,10 @@ jobs:
       - name: Build Android Release APK
         working-directory: ./frontend
         run: |
-          echo "=== Starting Flutter Release APK Build ==="
-          flutter build apk --release --no-tree-shake-icons 2>&1 | tee build_log.txt
-          BUILD_STATUS=${PIPESTATUS[0]}
-          echo "Build finished with exit code $BUILD_STATUS"
-          if [ $BUILD_STATUS -ne 0 ]; then
-            echo "::error::Flutter build failed."
-            exit $BUILD_STATUS
-          fi
+          echo "=== Flutter Analyze ==="
+          flutter analyze --no-fatal-infos || true
+          echo "=== Flutter Build APK ==="
+          flutter build apk --release --verbose --no-tree-shake-icons
 
       - name: Prepare APK Release Asset
         run: |
@@ -63,6 +59,7 @@ jobs:
           ls -la release_assets/
 
       - name: Upload Android APK Artifact
+        if: success()
         uses: actions/upload-artifact@v4
         with:
           name: Driver-App-Android-APK
@@ -70,7 +67,7 @@ jobs:
           retention-days: 30
 
       - name: Publish Android APK to GitHub Releases
-        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/')
+        if: (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/')) && success()
         uses: softprops/action-gh-release@v2
         with:
           tag_name: v1.0.0

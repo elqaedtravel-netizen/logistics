@@ -42,7 +42,15 @@ jobs:
         working-directory: ./frontend
         run: |
           echo "=== Starting Flutter Release APK Build ==="
-          flutter build apk --release --no-tree-shake-icons
+          set +e
+          flutter build apk --release --verbose --no-tree-shake-icons > build_log.txt 2>&1
+          BUILD_STATUS=$?
+          echo "Build finished with exit code $BUILD_STATUS"
+          if [ $BUILD_STATUS -ne 0 ]; then
+            echo "::error::Flutter build failed. Printing last 100 lines of log:"
+            tail -n 100 build_log.txt
+            exit $BUILD_STATUS
+          fi
 
       - name: Prepare APK Release Asset
         run: |

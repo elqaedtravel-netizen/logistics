@@ -1,4 +1,4 @@
-﻿package com.entelaqa.logistics
+package com.entelaqa.logistics
 
 import io.flutter.embedding.android.FlutterActivity
 

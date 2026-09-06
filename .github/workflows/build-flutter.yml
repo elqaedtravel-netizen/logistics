@@ -60,14 +60,14 @@ jobs:
       - name: Prepare APK Release Asset
         run: |
           mkdir -p release_assets
-          # Locate built APK and copy
-          APK_PATH=$(find frontend/build/app/outputs/flutter-apk -name "*release*.apk" | head -n 1)
+          # Locate built APK across all output directories
+          APK_PATH=$(find . -type f -name "*release*.apk" | head -n 1)
           if [ -z "$APK_PATH" ]; then
-            APK_PATH=$(find frontend/build/app/outputs/flutter-apk -name "*.apk" | head -n 1)
+            APK_PATH=$(find . -type f -name "*.apk" | head -n 1)
           fi
           echo "Found APK at: $APK_PATH"
           cp "$APK_PATH" release_assets/Entelaqa-Express-Driver-App.apk
-          ls -la release_assets/
+          ls -lh release_assets/
 
       - name: Upload Android APK Artifact
         if: success()

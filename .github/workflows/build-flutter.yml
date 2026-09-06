@@ -44,33 +44,23 @@ jobs:
         working-directory: ./frontend
         run: |
           echo "=== RUNNING FLUTTER RELEASE BUILD ==="
-          flutter build apk --release --verbose --no-tree-shake-icons 2>&1 | tee ../flutter_build_full_log.txt
-
-      - name: Capture Log On Failure
-        if: failure()
-        run: |
-          git config user.name "GitHub Actions Log Bot"
-          git config user.email "bot@github.com"
-          git checkout -B debug-build-log
-          cp flutter_build_full_log.txt ./build_error_log.txt
-          git add build_error_log.txt
-          git commit -m "build: save detailed flutter build error log" || true
-          git push origin debug-build-log --force || true
+          flutter build apk --release --no-tree-shake-icons
 
       - name: Prepare APK Release Asset
         run: |
           mkdir -p release_assets
-          # Locate built APK across all output directories
-          APK_PATH=$(find . -type f -name "*release*.apk" | head -n 1)
+          echo "=== SEARCHING FOR BUILT APKs ==="
+          find . -name "*.apk"
+          APK_PATH=$(find . -name "*.apk" | head -n 1)
           if [ -z "$APK_PATH" ]; then
-            APK_PATH=$(find . -type f -name "*.apk" | head -n 1)
+            echo "ERROR: No APK found!"
+            exit 1
           fi
           echo "Found APK at: $APK_PATH"
-          cp "$APK_PATH" release_assets/Entelaqa-Express-Driver-App.apk
+          cp -v "$APK_PATH" release_assets/Entelaqa-Express-Driver-App.apk
           ls -lh release_assets/
 
       - name: Upload Android APK Artifact
-        if: success()
         uses: actions/upload-artifact@v4
         with:
           name: Driver-App-Android-APK
@@ -78,7 +68,7 @@ jobs:
           retention-days: 30
 
       - name: Publish Android APK to GitHub Releases
-        if: (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/')) && success()
+        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v2
         with:
           tag_name: v1.0.0

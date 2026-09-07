@@ -44,15 +44,14 @@ jobs:
         working-directory: ./frontend
         run: |
           echo "=== RUNNING FLUTTER RELEASE BUILD ==="
+          set -o pipefail
           flutter build apk --release --no-tree-shake-icons 2>&1 | tee ../build_log.txt
 
-      - name: Upload Build Log
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: Flutter-Build-Log
-          path: build_log.txt
-          retention-days: 7
+      - name: Dump Log If Build Failed
+        if: failure()
+        run: |
+          echo "=== BUILD LOG CONTENT ==="
+          cat build_log.txt || true
 
       - name: Prepare APK Release Asset
         run: |

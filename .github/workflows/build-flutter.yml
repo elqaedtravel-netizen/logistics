@@ -19,8 +19,6 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
       - name: Setup Java 17
         uses: actions/setup-java@v4
@@ -42,27 +40,12 @@ jobs:
 
       - name: Build Android Release APK
         working-directory: ./frontend
-        run: |
-          echo "=== RUNNING FLUTTER RELEASE BUILD ==="
-          set -o pipefail
-          flutter build apk --release --no-tree-shake-icons 2>&1 | tee ../build_log.txt
-
-      - name: Dump Log If Build Failed
-        if: failure()
-        run: |
-          git config user.name "LogBot"
-          git config user.email "bot@github.com"
-          git checkout -B debug-error-log
-          cp ../build_log.txt ./error_output.txt
-          git add error_output.txt
-          git commit -m "build: upload error output" || true
-          git push origin debug-error-log --force || true
+        run: flutter build apk --release --no-tree-shake-icons
 
       - name: Prepare APK Release Asset
         run: |
           mkdir -p release_assets
-          echo "=== SEARCHING FOR BUILT APKs ==="
-          find . -name "*.apk"
+          # Locate built APK
           APK_PATH=$(find . -name "*.apk" | head -n 1)
           if [ -z "$APK_PATH" ]; then
             echo "ERROR: No APK found!"

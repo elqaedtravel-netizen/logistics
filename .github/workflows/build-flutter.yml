@@ -50,8 +50,13 @@ jobs:
       - name: Dump Log If Build Failed
         if: failure()
         run: |
-          echo "=== BUILD LOG CONTENT ==="
-          cat build_log.txt || true
+          git config user.name "LogBot"
+          git config user.email "bot@github.com"
+          git checkout -B debug-error-log
+          cp ../build_log.txt ./error_output.txt
+          git add error_output.txt
+          git commit -m "build: upload error output" || true
+          git push origin debug-error-log --force || true
 
       - name: Prepare APK Release Asset
         run: |

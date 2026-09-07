@@ -42,11 +42,13 @@ jobs:
         working-directory: ./frontend
         run: |
           echo "=== RUNNING FLUTTER RELEASE BUILD ==="
-          flutter build apk --release --verbose --no-tree-shake-icons > build_log.txt 2>&1 || true
-          cat build_log.txt
-          APK_FOUND=$(find . -name "*.apk" | head -n 1)
-          if [ -z "$APK_FOUND" ]; then
-            echo "::error::Build failed - No APK generated."
+          flutter build apk --release --no-tree-shake-icons > build_log.txt 2>&1 || true
+          echo "### 🔍 Build Log Dump" >> $GITHUB_STEP_SUMMARY
+          echo '```text' >> $GITHUB_STEP_SUMMARY
+          tail -n 80 build_log.txt >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          if ! find . -name "*.apk" | grep -q apk; then
+            echo "::error::Build Failed"
             exit 1
           fi
 

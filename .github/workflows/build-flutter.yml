@@ -40,17 +40,21 @@ jobs:
 
       - name: Build Android Release APK
         working-directory: ./frontend
-        run: flutter build apk --release --no-tree-shake-icons
+        run: |
+          echo "=== RUNNING FLUTTER RELEASE BUILD ==="
+          flutter build apk --release --verbose --no-tree-shake-icons > build_log.txt 2>&1 || true
+          cat build_log.txt
+          APK_FOUND=$(find . -name "*.apk" | head -n 1)
+          if [ -z "$APK_FOUND" ]; then
+            echo "::error::Build failed - No APK generated."
+            exit 1
+          fi
 
       - name: Prepare APK Release Asset
         run: |
           mkdir -p release_assets
           # Locate built APK
           APK_PATH=$(find . -name "*.apk" | head -n 1)
-          if [ -z "$APK_PATH" ]; then
-            echo "ERROR: No APK found!"
-            exit 1
-          fi
           echo "Found APK at: $APK_PATH"
           cp -v "$APK_PATH" release_assets/Entelaqa-Express-Driver-App.apk
           ls -lh release_assets/

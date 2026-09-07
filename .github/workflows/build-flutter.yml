@@ -29,35 +29,42 @@ jobs:
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.24.5'
+          channel: 'stable'
           cache: true
 
-      - name: Install Flutter Dependencies
+      - name: Generate Fresh Android Project Config
         working-directory: ./frontend
         run: |
           flutter config --no-analytics
+          rm -rf android
+          flutter create . --org com.entelaqa --project-name antigravity_logistics_app --platforms=android
+          # Add permissions to AndroidManifest.xml
+          sed -i '/<manifest/a \    <uses-permission android:name="android.permission.INTERNET"/>\n    <uses-permission android:name="android.permission.CAMERA"/>\n    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>\n    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>\n    <uses-permission android:name="android.permission.CALL_PHONE"/>' android/app/src/main/AndroidManifest.xml
+          # Set Arabic app label
+          sed -i 's/android:label="antigravity_logistics_app"/android:label="شركة انطلاقه للشحن"/' android/app/src/main/AndroidManifest.xml
+          # Enforce minSdk 21 in build.gradle / build.gradle.kts
+          if [ -f android/app/build.gradle ]; then
+            sed -i 's/minSdk = flutter.minSdkVersion/minSdk = 21/g' android/app/build.gradle
+            sed -i 's/minSdkVersion flutter.minSdkVersion/minSdkVersion 21/g' android/app/build.gradle
+          fi
+          if [ -f android/app/build.gradle.kts ]; then
+            sed -i 's/minSdk = flutter.minSdkVersion/minSdk = 21/g' android/app/build.gradle.kts
+            sed -i 's/minSdkVersion(flutter.minSdkVersion)/minSdkVersion(21)/g' android/app/build.gradle.kts
+          fi
           flutter pub get
 
       - name: Build Android Release APK
         working-directory: ./frontend
-        run: |
-          echo "=== RUNNING FLUTTER RELEASE BUILD ==="
-          flutter build apk --release --no-tree-shake-icons > build_log.txt 2>&1 || true
-          echo "### 🔍 Build Log Dump" >> $GITHUB_STEP_SUMMARY
-          echo '```text' >> $GITHUB_STEP_SUMMARY
-          tail -n 80 build_log.txt >> $GITHUB_STEP_SUMMARY
-          echo '```' >> $GITHUB_STEP_SUMMARY
-          if ! find . -name "*.apk" | grep -q apk; then
-            echo "::error::Build Failed"
-            exit 1
-          fi
+        run: flutter build apk --release --no-tree-shake-icons
 
-      - name: Prepare APK Release Asset
+      - name: Prepare Release Asset
         run: |
           mkdir -p release_assets
-          # Locate built APK
-          APK_PATH=$(find . -name "*.apk" | head -n 1)
-          echo "Found APK at: $APK_PATH"
+          APK_PATH=$(find frontend/build -type f -name "*.apk" | head -n 1)
+          if [ -z "$APK_PATH" ]; then
+            APK_PATH=$(find . -type f -name "*.apk" | head -n 1)
+          fi
+          echo "Found built APK at: $APK_PATH"
           cp -v "$APK_PATH" release_assets/Entelaqa-Express-Driver-App.apk
           ls -lh release_assets/
 

@@ -44,7 +44,16 @@ jobs:
         working-directory: ./frontend
         run: |
           echo "=== RUNNING FLUTTER RELEASE BUILD ==="
-          flutter build apk --release --no-tree-shake-icons
+          set +e
+          flutter build apk --release --no-tree-shake-icons 2>&1 | tee ../build_log.txt
+          BUILD_CODE=${PIPESTATUS[0]}
+          if [ $BUILD_CODE -ne 0 ]; then
+            echo "### ❌ Build Failure Log" >> $GITHUB_STEP_SUMMARY
+            echo '```text' >> $GITHUB_STEP_SUMMARY
+            tail -n 120 ../build_log.txt >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            exit $BUILD_CODE
+          fi
 
       - name: Prepare APK Release Asset
         run: |

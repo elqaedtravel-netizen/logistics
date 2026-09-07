@@ -32,13 +32,14 @@ jobs:
           channel: 'stable'
           cache: true
 
-      - name: Install Flutter Dependencies & Verify Dart Code
+      - name: Run Flutter Pub Get and Analyze
         working-directory: ./frontend
         run: |
           flutter config --no-analytics
           flutter pub get
-          echo "=== VERIFYING DART CODEBASE VIA WEB BUILD ==="
-          flutter build web --release
+          echo "=== RUNNING FLUTTER ANALYZE ==="
+          flutter analyze --no-fatal-warnings || true
+          flutter analyze
 
       - name: Generate Clean Android Project Config
         working-directory: ./frontend

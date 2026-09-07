@@ -31,7 +31,7 @@ jobs:
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          channel: 'stable'
+          flutter-version: '3.24.5'
           cache: true
 
       - name: Install Flutter Dependencies
@@ -44,16 +44,15 @@ jobs:
         working-directory: ./frontend
         run: |
           echo "=== RUNNING FLUTTER RELEASE BUILD ==="
-          set +e
           flutter build apk --release --no-tree-shake-icons 2>&1 | tee ../build_log.txt
-          BUILD_CODE=${PIPESTATUS[0]}
-          if [ $BUILD_CODE -ne 0 ]; then
-            echo "### ❌ Build Failure Log" >> $GITHUB_STEP_SUMMARY
-            echo '```text' >> $GITHUB_STEP_SUMMARY
-            tail -n 120 ../build_log.txt >> $GITHUB_STEP_SUMMARY
-            echo '```' >> $GITHUB_STEP_SUMMARY
-            exit $BUILD_CODE
-          fi
+
+      - name: Upload Build Log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Flutter-Build-Log
+          path: build_log.txt
+          retention-days: 7
 
       - name: Prepare APK Release Asset
         run: |
